@@ -3,12 +3,152 @@
  */
 package dsl.project;
 
+import dsl.project.model.Document;
+import dsl.project.model.Slot;
+import dsl.project.tasks.AggregatorTask;
+import dsl.project.tasks.FilterTask;
+import dsl.project.tasks.SplitterTask;
+import dsl.project.tasks.Task;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
-    @Test void appHasAGreeting() {
+    @Test
+    void appHasAGreeting() {
         App classUnderTest = new App();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+    }
+
+    /**
+     * Test de integración que simula un pipeline de procesamiento de documentos:
+     * Input → FilterTask → SplitterTask → Output
+     *
+     * Escenario:
+     * 1. Se crean 3 documentos de entrada (uno vacío que será filtrado)
+     * 2. FilterTask filtra el documento vacío
+     * 3. SplitterTask divide el contenido por comas
+     * 4. Se verifican los documentos de salida
+     */
+    @Test
+    void testTaskPipelineWithInputAndOutput() {
+        // === PREPARACIÓN: Crear Slots (buffers) ===
+        Slot inputSlot = new Slot();           // Entrada inicial
+        Slot filterToSplitter = new Slot();    // Entre Filter y Splitter
+        Slot outputSlot = new Slot();          // Salida final
+
+        // === PASO 1: Crear documentos de entrada ===
+        Document doc1 = new Document("doc-1", "Hola,Mundo");
+        Document doc2 = new Document("doc-2", "");  // Vacío - será filtrado
+        Document doc3 = new Document("doc-3", "Java,Gradle,Test");
+
+        // Escribir documentos en el slot de entrada
+        inputSlot.write(doc1);
+        inputSlot.write(doc2);
+        inputSlot.write(doc3);
+
+        // === PASO 2: Configurar FilterTask ===
+        Task filterTask = new FilterTask();
+        filterTask.addInputSlot(inputSlot);
+        filterTask.addOutputSlot(filterToSplitter);
+
+        // === PASO 3: Configurar SplitterTask ===
+        Task splitterTask = new SplitterTask();
+        splitterTask.addInputSlot(filterToSplitter);
+        splitterTask.addOutputSlot(outputSlot);
+
+        // === EJECUCIÓN: Ejecutar el pipeline ===
+        // Ejecutar FilterTask hasta procesar todos los documentos del input
+        System.out.println("=== Ejecutando FilterTask ===");
+        while (!inputSlot.isEmpty()) {
+            filterTask.execute();
+        }
+
+        // Ejecutar SplitterTask hasta procesar todos los documentos filtrados
+        System.out.println("=== Ejecutando SplitterTask ===");
+        while (!filterToSplitter.isEmpty()) {
+            splitterTask.execute();
+        }
+
+        // === VERIFICACIÓN: Comprobar resultados ===
+        // El FilterTask debería haber filtrado doc2 (vacío)
+        // El SplitterTask debería haber dividido:
+        //   - "Hola,Mundo" → "Hola", "Mundo"
+        //   - "Java,Gradle,Test" → "Java", "Gradle", "Test"
+        // Total esperado: 5 documentos de salida
+
+        int outputCount = 0;
+        StringBuilder outputContent = new StringBuilder();
+
+        while (!outputSlot.isEmpty()) {
+            Document outputDoc = outputSlot.read();
+            assertNotNull(outputDoc, "El documento de salida no debería ser null");
+            outputCount++;
+            System.out.println("Output " + outputCount + ": " + outputDoc);
+            outputContent.append(outputDoc.getContent()).append("|");
+        }
+
+        // Verificaciones
+        assertEquals(5, outputCount, "Debería haber 5 documentos de salida (2 de doc1 + 3 de doc3)");
+        assertTrue(outputContent.toString().contains("Hola"), "Debe contener 'Hola'");
+        assertTrue(outputContent.toString().contains("Mundo"), "Debe contener 'Mundo'");
+        assertTrue(outputContent.toString().contains("Java"), "Debe contener 'Java'");
+        assertTrue(outputContent.toString().contains("Gradle"), "Debe contener 'Gradle'");
+        assertTrue(outputContent.toString().contains("Test"), "Debe contener 'Test'");
+
+        System.out.println("✅ Test completado exitosamente");
+    }
+
+    /**
+     * Test de pipeline con AggregatorTask:
+     * Múltiples Inputs → AggregatorTask → Output
+     *
+     * Escenario:
+     * 1. Se crean múltiples documentos en diferentes slots
+     * 2. AggregatorTask los combina en uno solo
+     * 3. Se verifica que el documento agregado contiene todos los contenidos
+     */
+    @Test
+    void testAggregatorPipeline() {
+        // === PREPARACIÓN ===
+        Slot input1 = new Slot();
+        Slot input2 = new Slot();
+        Slot input3 = new Slot();
+        Slot outputSlot = new Slot();
+
+        // === ENTRADA: Crear documentos ===
+        input1.write(new Document("d1", "Alpha"));
+        input2.write(new Document("d2", "Beta"));
+        input3.write(new Document("d3", "Gamma"));
+
+        // === CONFIGURACIÓN: Crear y configurar AggregatorTask ===
+        Task aggregator = new AggregatorTask();
+        aggregator.addInputSlot(input1);
+        aggregator.addInputSlot(input2);
+        aggregator.addInputSlot(input3);
+        aggregator.addOutputSlot(outputSlot);
+
+        // === EJECUCIÓN ===
+        System.out.println("=== Ejecutando AggregatorTask ===");
+        aggregator.execute();
+
+        // === VERIFICACIÓN ===
+        assertFalse(outputSlot.isEmpty(), "Debe haber un documento agregado");
+
+        Document result = outputSlot.read();
+        assertNotNull(result, "El resultado no debe ser null");
+
+        String content = result.getContent().toString();
+        System.out.println("Contenido agregado: " + content);
+
+        // Verificar que contiene todos los elementos
+        assertTrue(content.contains("Alpha"), "Debe contener 'Alpha'");
+        assertTrue(content.contains("Beta"), "Debe contener 'Beta'");
+        assertTrue(content.contains("Gamma"), "Debe contener 'Gamma'");
+
+        // Verificar que solo hay un documento de salida
+        assertTrue(outputSlot.isEmpty(), "No debe haber más documentos de salida");
+
+        System.out.println("✅ Test de agregación completado exitosamente");
     }
 }
