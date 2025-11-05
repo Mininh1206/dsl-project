@@ -3,3 +3,17 @@
 
 # Ignore Gradle build output directory
 build
+
+# Ignore compiled class files
+*.class
+
+# Ignore Eclipse/IDE bin directory (compiled classes)
+bin/
+
+# Ignore IDE-specific files
+.classpath
+.project
+.settings/
+.vscode/
+*.iml
+.idea/
