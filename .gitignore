@@ -17,3 +17,5 @@ bin/
 .vscode/
 *.iml
 .idea/
+/dsl-framework/nbproject/
+/dsl-framework/target/
