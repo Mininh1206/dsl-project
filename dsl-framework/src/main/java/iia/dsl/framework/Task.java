@@ -32,4 +32,8 @@ public abstract class Task extends Element {
     }
     
     public abstract void execute() throws Exception;
+
+    String getType() {
+        return this.getClass().getName();
+    }
 }

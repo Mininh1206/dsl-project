@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Flow extends Element {
-    private final List<Port> ports;
-    private final List<Task> tasks;
+    private List<Port> ports;
+    private List<Task> tasks;
     
     public Flow(String id) {
         super(id);
@@ -22,28 +22,39 @@ public class Flow extends Element {
     }
     
     public void execute() {
-        // Ejecutar puertos de entrada y request
-        for (Port port : ports) {
-            if (port instanceof InputPort || port instanceof RequestPort) {
-                port.execute();
-            }
-        }
-        
-        // Ejecutar tareas
-        for (Task task : tasks) {
-            try {
+        try {
+            System.out.println("Ejecutando Flow: " + id);
+            
+            // 1. Ejecutar InputPorts (cargar datos)
+            System.out.println("\n1. Cargando datos de entrada...");
+            ports.stream()
+                .filter(p -> p instanceof InputPort)
+                .forEach(Port::execute);
+            
+            // 2. Ejecutar RequestPorts si existen
+            System.out.println("\n2. Procesando requests externos...");
+            ports.stream()
+                .filter(p -> p instanceof RequestPort)
+                .forEach(Port::execute);
+            
+            // 3. Ejecutar Tasks en orden
+            System.out.println("\n3. Ejecutando pipeline de tareas...");
+            for (Task task : tasks) {
+                System.out.println("\tEjecutando: " + task.getId() + " (" + task.getType() + ")");
                 task.execute();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
-        }
-        
-        // Ejecutar puertos de salida
-        for (Port port : ports) {
-            if (port instanceof OutputPort) {
-                port.execute();
-            }
+            
+            // 4. Ejecutar OutputPorts (enviar resultados)
+            System.out.println("\n4. Enviando resultados...");
+            ports.stream()
+                .filter(p -> p instanceof OutputPort)
+                .forEach(Port::execute);
+            
+            System.out.println("\nFlow completado exitosamente\n");
+            
+        } catch (Exception e) {
+            System.err.println("Error en Flow: " + e.getMessage());
+            throw new RuntimeException("Flow execution failed", e);
         }
     }
 }
