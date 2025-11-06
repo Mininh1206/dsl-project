@@ -1,5 +1,5 @@
 
-- [Doc ia](docs/ANALISIS_Y_TESTS.md)
+- [Doc Analisis](ANALISIS_Y_TESTS.md)
 
 ## Diagrama de clases
 ```mermaid
