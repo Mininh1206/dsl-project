@@ -191,6 +191,22 @@ public class Main {
             
             // === EJECUCIÓN ===
             flow.execute();
+            
+            // === PASO 3: Mostrar resultado final ===
+            Document result = outputSlot.getDocument();
+            System.out.println("XML de salida (Factura generada):");
+            System.out.println(documentToString(result));
+            System.out.println("\n=== Pipeline completado exitosamente ===");
+            // Verificaciones
+            System.out.println("\nVerificaciones:");
+            System.out.println("- Nodo raíz: " + result.getDocumentElement().getNodeName());
+            System.out.println("- Número de factura: "
+                    + result.getElementsByTagName("invoiceNumber").item(0).getTextContent());
+            System.out.println("- Cliente: "
+                    + result.getElementsByTagName("customerName").item(0).getTextContent());
+            System.out.println("- Total de items: "
+                    + result.getElementsByTagName("totalItems").item(0).getTextContent());
+            
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
