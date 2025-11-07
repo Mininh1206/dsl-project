@@ -7,7 +7,7 @@ public class ModifierFactory extends TaskFactory {
     public Task createTask(String id, String taskName) {
         return switch (taskName.toLowerCase()) {
             case "slimmer" -> new Slimmer(id, null, null, ""); // Los parámetros se configurarán después
-            case "contextslimmer" -> throw new UnsupportedOperationException("ContextSlimmer not implemented yet");
+            case "contextslimmer" -> new ContextSlimmer(id, null, null, ""); // Los parámetros se configurarán después
             case "contextenricher" -> throw new UnsupportedOperationException("ContextEnricher not implemented yet");
             case "headerpromoter" -> throw new UnsupportedOperationException("HeaderPromoter not implemented yet");
             case "headerdemoter" -> throw new UnsupportedOperationException("HeaderDemoter not implemented yet");

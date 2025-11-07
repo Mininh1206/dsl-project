@@ -8,7 +8,7 @@ public class RouterFactory extends TaskFactory {
         return switch (taskName.toLowerCase()) {
             case "filter" -> new Filter(id, null, null, ""); // Los parámetros se configurarán después
             case "correlator" -> throw new UnsupportedOperationException("Correlator not implemented yet");
-            case "merger" -> throw new UnsupportedOperationException("Merger not implemented yet");
+            case "merger" -> new Merger(id, java.util.List.of(), null); // Los parámetros se configurarán después
             case "distributor" -> throw new UnsupportedOperationException("Distributor not implemented yet");
             case "replicator" -> throw new UnsupportedOperationException("Replicator not implemented yet");
             case "threader" -> throw new UnsupportedOperationException("Threader not implemented yet");
