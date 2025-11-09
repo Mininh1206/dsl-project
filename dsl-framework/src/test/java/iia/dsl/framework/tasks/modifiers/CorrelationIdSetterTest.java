@@ -1,0 +1,70 @@
+package iia.dsl.framework.tasks.modifiers;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+
+import iia.dsl.framework.Message;
+import iia.dsl.framework.Slot;
+import iia.dsl.framework.util.TestUtils;
+
+/**
+ * Tests unitarios para CorrelationIdSetter.
+ */
+public class CorrelationIdSetterTest {
+
+	@Test
+	public void testAssignsIdWhenMessagePresent() throws Exception {
+		Document doc = TestUtils.createXMLDocument(TestUtils.SAMPLE_XML);
+
+		Slot input = new Slot("in");
+		Slot output = new Slot("out");
+
+		Message original = new Message("orig-123", doc);
+		input.setMessage(original);
+
+		CorrelationIdSetter setter = new CorrelationIdSetter("cis-1", input, output);
+		setter.execute();
+
+		Message out = output.getMessage();
+		assertNotNull(out, "Output message must not be null");
+		assertNotEquals("orig-123", out.getId(), "ID should be replaced with a generated correlation id");
+		assertTrue(out.getId().matches("\\d{6}"), "Generated id must be 6 digits");
+		assertNotNull(out.getDocument(), "Document should be preserved on the output message");
+	}
+
+	@Test
+	public void testCreatesMessageWhenOnlyDocumentPresent() throws Exception {
+		Document doc = TestUtils.createXMLDocument(TestUtils.SAMPLE_XML);
+
+		Slot input = new Slot("in");
+		Slot output = new Slot("out");
+
+		input.setDocument(doc);
+
+		CorrelationIdSetter setter = new CorrelationIdSetter("cis-2", input, output);
+		setter.execute();
+
+		Message out = output.getMessage();
+		assertNotNull(out, "Output message must not be null when input had a document");
+		assertNotNull(out.getId(), "Generated id must not be null");
+		assertTrue(out.getId().matches("\\d{6}"), "Generated id must be 6 digits");
+		assertNotNull(out.getDocument(), "Document should be set on the generated message");
+		assertEquals("order", out.getDocument().getDocumentElement().getNodeName());
+	}
+
+	@Test
+	public void testThrowsWhenSlotEmpty() {
+		Slot input = new Slot("in");
+		Slot output = new Slot("out");
+
+		CorrelationIdSetter setter = new CorrelationIdSetter("cis-3", input, output);
+
+		Exception ex = assertThrows(Exception.class, () -> {
+			setter.execute();
+		});
+
+		assertTrue(ex.getMessage().contains("No hay mensaje/documento"), "Exception should mention missing message/document");
+	}
+}
