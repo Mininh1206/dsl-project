@@ -20,69 +20,17 @@ import iia.dsl.framework.util.Storage;
 
 public class Splitter extends Task {
     private final String itemXPath;
-    private final DocumentBuilder docBuilder;
 
     public Splitter(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
         super(id, TaskType.TRANSFORMER);
-        
-        if (inputSlot != null) addInputSlot(inputSlot);
-        if (outputSlot != null) addOutputSlot(outputSlot);
         this.itemXPath = itemXPath;
-
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            this.docBuilder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException("Error initializing DocumentBuilder for Splitter", e);
-        }
+        this.addInputSlot(inputSlot);
+        this.addOutputSlot(outputSlot);
+        // TODO
     }
 
     @Override
     public void execute() throws Exception {
-        Storage storage = Storage.getInstance();
-        Slot in = inputSlots.get(0);
-        Slot out = outputSlots.get(0);
-        Document d = in.getDocument();
-        
-        String parentId = in.getMessageId();
-        
-        if (d == null) {
-            System.out.println("Splitter '" + id + "' no tiene documento para dividir.");
-            return;
-        }
-
-        NodeList nodesToSplit = (NodeList) XPathFactory.newInstance()
-            .newXPath()
-            .compile(itemXPath)
-            .evaluate(d, XPathConstants.NODESET);
-
-        if (nodesToSplit.getLength() == 0) {
-            System.out.println("Splitter '" + id + "': XPath no encontró nodos para dividir.");
-            return;
-        }
-        
-        System.out.println("Splitter '" + id + "' dividiendo en " + nodesToSplit.getLength() + " partes. ID común: " + parentId);
-
-        List<Integer> partSequenceIndices = new ArrayList<>();
-
-        for (int i = 0; i < nodesToSplit.getLength(); i++) {
-            Node splitNode = nodesToSplit.item(i);
-            
-            Document newDoc = docBuilder.newDocument();
-            Node importedNode = newDoc.importNode(splitNode, true);
-            newDoc.appendChild(importedNode);
-            
-            // La clave de almacenamiento es: ID_PADRE + -part- + ÍNDICE
-            String partKey = parentId + "-part-" + i;
-            
-            storage.storeDocument(partKey, newDoc);
-            
-            partSequenceIndices.add(i); 
-            out.setDocument(newDoc); 
-        }
-        
-        String sequenceKey = parentId;
-        storage.storePartSequence(sequenceKey, partSequenceIndices);
-        System.out.println("✓ Splitter '" + id + "' completado. Secuencia de " + partSequenceIndices.size() + " partes guardada.");
+        // TODO
     }
 }

@@ -1,9 +1,7 @@
 package iia.dsl.framework.util;
 
 import org.w3c.dom.Document;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,12 +12,10 @@ public class Storage {
     
     private static Storage instance;
     private final Map<String, Document> documentStore;
-    private final Map<String, List<Integer>> sequenceStore;
 
     
     private Storage() {
-        this.documentStore = Collections.synchronizedMap(new HashMap<>());
-        this.sequenceStore = Collections.synchronizedMap(new HashMap<>());
+        this.documentStore = new HashMap<>();
         System.out.println("Storage Singleton inicializado.");
     }
     
@@ -48,17 +44,5 @@ public class Storage {
 
     public void removeDocument(String key) {
         documentStore.remove(key);
-    }
-
-    public void storePartSequence(String sequenceKey, List<Integer> partIndices) {
-        if (sequenceKey == null || partIndices == null) return;
-        sequenceStore.put(sequenceKey, partIndices);
-    }
-    public List<Integer> retrievePartSequence(String sequenceKey) {
-        return sequenceStore.get(sequenceKey);
-    }
-    
-    public void removePartSequence(String sequenceKey) {
-        sequenceStore.remove(sequenceKey);
     }
 }
