@@ -6,21 +6,5 @@ import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.Storage;
 
 public class SplitterTest {
-
-    private Storage storage;
-    private Slot inputSlot;
-    private Slot outputSlot;
-    private String parentId;
-
-    @BeforeEach
-    @SuppressWarnings("unused")
-    void setUp() throws Exception {
-        // TODO
-    }
-
-    @AfterEach
-    @SuppressWarnings("unused")
-    void tearDown() {
-        // TODO
-    }
+ // TODO
 }

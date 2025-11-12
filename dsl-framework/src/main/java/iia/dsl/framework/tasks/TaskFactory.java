@@ -1,8 +1,6 @@
 package iia.dsl.framework.tasks;
 
 public abstract class TaskFactory {
-    public abstract Task createTask(String id, String taskName);
-    
     public static TaskFactory getFactory(TaskType type) {
         return switch (type) {
             case ROUTER -> new RouterFactory();

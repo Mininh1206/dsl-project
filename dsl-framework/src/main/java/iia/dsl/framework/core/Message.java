@@ -12,10 +12,16 @@ import org.w3c.dom.Document;
 public class Message extends Element {
     private Document document;
     private final Map<String, String> headers;
-    public static final String  CORRELATION_ID = "correlation-id";
+    public static final String CORRELATION_ID = "correlation-id";
     public static final String NUM_FRAG = "num-frag";
     public static final String TOTAL_FRAG = "total-frag";
     
+    public Message(String id, Document document, Map<String, String> headers) {
+        super(id);
+        this.document = document;
+        this.headers = new HashMap<>(headers);
+    }
+
     public Message(String id, Document document) {
         super(id);
         this.document = document;

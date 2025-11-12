@@ -3,6 +3,7 @@ package iia.dsl.framework.tasks.modifiers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -41,7 +42,7 @@ public class CorrelationIdSetter extends Task {
          throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
       }
       
-      msg.addHeader("correlation-id", generateId());
+      msg.addHeader(Message.CORRELATION_ID, generateId());
 
       outSlot.setMessage(msg);
    }
