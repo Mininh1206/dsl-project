@@ -1,5 +1,7 @@
 package iia.dsl.framework.tasks;
 
+import java.util.List;
+
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.routers.Correlator;
 import iia.dsl.framework.tasks.routers.Filter;
@@ -10,8 +12,12 @@ public class RouterFactory extends TaskFactory {
         return new Filter(id, inputSlot, outputSlot, xpath);
     }
 
-    public Task createCorrelatorTask(String id, Slot inputSlot, Slot inputSlot2, Slot outputSlot1, Slot outputSlot2, String correlationXPath) {
-        return new Correlator(id, inputSlot, inputSlot2, outputSlot1, outputSlot2, correlationXPath);
+    public Task createCorrelatorTask(String id, List<Slot> inputSlot, List<Slot> outputSlot, String correlationXPath) {
+        return new Correlator(id, inputSlot, outputSlot, correlationXPath);
+    }
+
+    public Task createCorrelatorTask(String id, List<Slot> inputSlot, List<Slot> outputSlot) {
+        return new Correlator(id, inputSlot, outputSlot);
     }
 
     public Task createMergerTask(String id, java.util.List<Slot> inputSlots, Slot outputSlot) {
