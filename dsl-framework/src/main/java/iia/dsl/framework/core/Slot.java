@@ -31,10 +31,6 @@ public class Slot extends Element {
      * Obtiene el mensaje del slot.
      */
     public Message getMessage() {
-        return messages.peek();
-    }
-
-    public Message getAndRemoveMessage() {
         return messages.poll();
     }
 

@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -26,11 +27,46 @@ public class Splitter extends Task {
         this.itemXPath = itemXPath;
         this.addInputSlot(inputSlot);
         this.addOutputSlot(outputSlot);
-        // TODO
     }
 
     @Override
     public void execute() throws Exception {
-        // TODO
+        var in = inputSlots.get(0);
+        var d = in.getDocument();
+        if (d == null) {
+            throw new Exception("No hay ningun documento para leer");
+        }
+
+        var xf = XPathFactory.newInstance();
+        var x = xf.newXPath();
+
+        var ce = x.compile(itemXPath);
+        var nodes = (NodeList) ce.evaluate(d, XPathConstants.NODESET);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        if (nodes != null) {
+            int totalNodes = nodes.getLength();
+            for (int i = 0; i < totalNodes; i++) {
+                Node node = nodes.item(i);
+                if (node != null) {
+                    d.removeChild(node);
+
+                    Document dr = builder.newDocument();
+                    Node importedNode = dr.importNode(node, true);
+                    dr.appendChild(importedNode);
+
+                    Message msg = new Message(in.getMessageId(), dr);
+                    msg.addHeader(Message.NUM_FRAG, "" + i);
+                    msg.addHeader(Message.TOTAL_FRAG, "" + totalNodes);
+                    outputSlots.get(0).setMessage(msg);
+                }
+            }
+        }
+
+        Storage.getInstance().storeDocument(in.getMessageId(), d);
+
     }
 }

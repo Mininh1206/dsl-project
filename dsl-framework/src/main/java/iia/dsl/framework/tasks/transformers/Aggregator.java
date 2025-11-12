@@ -1,11 +1,18 @@
 package iia.dsl.framework.tasks.transformers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
@@ -22,7 +29,9 @@ import iia.dsl.framework.tasks.TaskType;
  */
 public class Aggregator extends Task {
 
-    private final String wrapperElementName;
+    private final String itemXPath;
+
+    private final Map<String, List<Message>> messages;
 
     /**
      * Constructor del Aggregator.
@@ -32,61 +41,38 @@ public class Aggregator extends Task {
      * @param outputSlot Slot de salida donde se escribirá el documento agregado
      * @param wrapperElementName Nombre del elemento raíz para el documento agregado
      */
-    public Aggregator(String id, Slot inputSlot, Slot outputSlot, String wrapperElementName) {
+    public Aggregator(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
         super(id, TaskType.TRANSFORMER);
         
         addInputSlot(inputSlot);
         addOutputSlot(outputSlot);
-        
-        this.wrapperElementName = wrapperElementName;
+        messages = new HashMap<>();
+        this.itemXPath = itemXPath;
     }
     
-    /**
-     * Constructor simplificado que usa "aggregated" como nombre del wrapper.
-     */
+    
     public Aggregator(String id, Slot inputSlot, Slot outputSlot) {
         this(id, inputSlot, outputSlot, "aggregated");
     }
 
     @Override
     public void execute() throws Exception {
-        var inputMessage = inputSlots.get(0).getMessage();
-        
-        if (inputMessage == null) {
-            throw new Exception("No hay mensaje en el slot de entrada");
+        var in = inputSlots.get(0);
+        if (!in.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de entrada para Aggregator");
+        }
+        var m = in.getMessage();
+        if (!m.hasDocument()) {
+            throw new Exception("No hay Documento en el slot de entrada para Aggregator");
+        }
+        var d = m.getDocument();
+
+        if(messages.containsKey(m.getId())) {
+            messages.get(m.getId()).add(m);
+        } else {
+            messages.put(m.getId(), List.of(m));
         }
         
-        var inputDoc = inputMessage.getDocument();
-        
-        if (inputDoc == null) {
-            throw new Exception("No hay documento en el mensaje de entrada");
-        }
-        
-        // Crear un nuevo documento para el resultado agregado
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document aggregatedDoc = db.newDocument();
-        
-        // Crear el elemento raíz
-        Element root = aggregatedDoc.createElement(wrapperElementName);
-        aggregatedDoc.appendChild(root);
-        
-        // Copiar todos los elementos del documento de entrada al nuevo documento
-        Node rootNode = inputDoc.getDocumentElement();
-        if (rootNode != null && rootNode.hasChildNodes()) {
-            var childNodes = rootNode.getChildNodes();
-            for (int i = 0; i < childNodes.getLength(); i++) {
-                Node child = childNodes.item(i);
-                if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    Node importedNode = aggregatedDoc.importNode(child, true);
-                    root.appendChild(importedNode);
-                }
-            }
-        }
-        
-        // Crear mensaje de salida con el documento agregado
-        Message outputMessage = new Message(inputMessage.getId(), aggregatedDoc);
-        outputSlots.get(0).setMessage(outputMessage);
     }
 }
 

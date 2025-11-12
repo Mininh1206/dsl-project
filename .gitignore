@@ -16,8 +16,10 @@ bin/
 .settings/
 .vscode/
 .vs/
-dsl-framework/.vs
+/dsl-framework/.vs
 *.iml
 .idea/
 /dsl-framework/nbproject/
 /dsl-framework/target/
+.LCK*~
+
