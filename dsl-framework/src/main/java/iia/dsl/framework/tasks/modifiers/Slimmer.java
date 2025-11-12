@@ -6,9 +6,9 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.Task;
-import iia.dsl.framework.TaskType;
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.tasks.Task;
+import iia.dsl.framework.tasks.TaskType;
 
 public class Slimmer extends Task {
     private final String xpath;

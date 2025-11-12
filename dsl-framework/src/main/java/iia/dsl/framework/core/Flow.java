@@ -1,11 +1,17 @@
-package iia.dsl.framework;
+package iia.dsl.framework.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import iia.dsl.framework.ports.InputPort;
+import iia.dsl.framework.ports.OutputPort;
+import iia.dsl.framework.ports.Port;
+import iia.dsl.framework.ports.RequestPort;
+import iia.dsl.framework.tasks.Task;
+
 public class Flow extends Element {
-    private List<Port> ports;
-    private List<Task> tasks;
+    private final List<Port> ports;
+    private final List<Task> tasks;
     
     public Flow(String id) {
         super(id);

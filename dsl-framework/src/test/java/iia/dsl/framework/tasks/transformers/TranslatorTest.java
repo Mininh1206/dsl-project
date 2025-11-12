@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.Slot;
+import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
 public class TranslatorTest {

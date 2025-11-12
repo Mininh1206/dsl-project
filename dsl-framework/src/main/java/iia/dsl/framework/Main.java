@@ -3,6 +3,8 @@ package iia.dsl.framework;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,11 +16,16 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.connectors.Connector;
+import iia.dsl.framework.connectors.ConsoleConnector;
+import iia.dsl.framework.connectors.MockConnector;
+import iia.dsl.framework.core.Flow;
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.ports.InputPort;
+import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.tasks.modifiers.Slimmer;
 import iia.dsl.framework.tasks.routers.Filter;
 import iia.dsl.framework.tasks.transformers.Translator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
 
@@ -87,6 +94,7 @@ public class Main {
         demoFlow();
     }
 
+    @SuppressWarnings("unused")
     private static void demoManual() {
         System.out.println("=== DEMO del Framework DSL ===\n");
         try {
@@ -156,11 +164,11 @@ public class Main {
             System.out.println("- Total de items: "
                     + result.getElementsByTagName("totalItems").item(0).getTextContent());
         } catch (Exception e) {
-            System.err.println("Error en el pipeline: " + e.getMessage());
-            e.printStackTrace();
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
+    @SuppressWarnings("unused")
     private static void demoFlow() {
         try {
             // === CONFIGURACIÓN ===

@@ -1,11 +1,13 @@
 package iia.dsl.framework.tasks.modifiers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import iia.dsl.framework.Slot;
+import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
 public class SlimmerTest {

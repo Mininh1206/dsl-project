@@ -1,10 +1,12 @@
 package iia.dsl.framework.tasks.routers;
 
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.Task;
-import iia.dsl.framework.TaskType;
-import org.w3c.dom.Document;
 import java.util.List;
+
+import org.w3c.dom.Document;
+
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.tasks.Task;
+import iia.dsl.framework.tasks.TaskType;
 
 public class Replicator extends Task {
 
@@ -31,7 +33,7 @@ public class Replicator extends Task {
         for (Slot outputSlot : outputSlots) {
             Document docCopy = (Document) d.cloneNode(true);
             outputSlot.setDocument(docCopy);
-            System.out.println("✓ Replicator '" + id + "' duplicó mensaje a slot: " + outputSlot.getId());
+            System.out.println("Replicator '" + id + "' duplicó mensaje a slot: " + outputSlot.getId());
         }
     }
 }

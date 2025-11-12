@@ -1,12 +1,15 @@
 package iia.dsl.framework.tasks.modifiers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.Message;
-import iia.dsl.framework.Slot;
+import iia.dsl.framework.core.Message;
+import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
 /**
@@ -29,8 +32,8 @@ public class CorrelationIdSetterTest {
 
 		Message out = output.getMessage();
 		assertNotNull(out, "Output message must not be null");
-		assertNotEquals("orig-123", out.getId(), "ID should be replaced with a generated correlation id");
-		assertTrue(out.getId().matches("\\d{6}"), "Generated id must be 6 digits");
+		assertTrue(out.hasHeader("correlation-id"), "ID should be replaced with a generated correlation id");
+		assertTrue(out.getHeader("correlation-id").matches("\\d{6}"), "Generated id must be 6 digits");
 		assertNotNull(out.getDocument(), "Document should be preserved on the output message");
 	}
 
@@ -48,8 +51,8 @@ public class CorrelationIdSetterTest {
 
 		Message out = output.getMessage();
 		assertNotNull(out, "Output message must not be null when input had a document");
-		assertNotNull(out.getId(), "Generated id must not be null");
-		assertTrue(out.getId().matches("\\d{6}"), "Generated id must be 6 digits");
+		assertNotNull(out.getHeader("correlation-id"), "Generated id must not be null");
+		assertTrue(out.getHeader("correlation-id").matches("\\d{6}"), "Generated id must be 6 digits");
 		assertNotNull(out.getDocument(), "Document should be set on the generated message");
 		assertEquals("order", out.getDocument().getDocumentElement().getNodeName());
 	}
@@ -65,6 +68,6 @@ public class CorrelationIdSetterTest {
 			setter.execute();
 		});
 
-		assertTrue(ex.getMessage().contains("No hay mensaje/documento"), "Exception should mention missing message/document");
+		assertTrue(ex.getMessage().contains("No hay mensaje"), "Exception should mention missing message");
 	}
 }

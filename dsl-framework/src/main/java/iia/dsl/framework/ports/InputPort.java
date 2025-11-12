@@ -1,6 +1,9 @@
-package iia.dsl.framework;
+package iia.dsl.framework.ports;
 
 import org.w3c.dom.Document;
+
+import iia.dsl.framework.connectors.Connector;
+import iia.dsl.framework.core.Slot;
 
 public class InputPort extends Port {
     public InputPort(String id, Connector connector, Slot slot) {

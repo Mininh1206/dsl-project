@@ -1,4 +1,4 @@
-package iia.dsl.framework;
+package iia.dsl.framework.tasks;
 
 public enum TaskType {
     ROUTER,

@@ -3,10 +3,10 @@ package iia.dsl.framework.tasks.modifiers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import iia.dsl.framework.Message;
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.Task;
-import iia.dsl.framework.TaskType;
+import iia.dsl.framework.core.Message;
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.tasks.Task;
+import iia.dsl.framework.tasks.TaskType;
 
 /**
  * CorrelationIdSetter - asigna un ID de correlación (secuencial) al Message
@@ -32,17 +32,17 @@ public class CorrelationIdSetter extends Task {
       var inSlot = inputSlots.get(0);
       var outSlot = outputSlots.get(0);
 
+      if (!inSlot.hasMessage())
+         throw new Exception("No hay mensaje en el slot de entrada para CorrelationIdSetter '" + id + "'");
+
+      // Intentar compatibilidad con uso por documentos individuales
       var msg = inSlot.getMessage();
-      if (msg == null) {
-         // Intentar compatibilidad con uso por documentos individuales
-         var doc = inSlot.getDocument();
-         if (doc == null) {
-            throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
-         }
-         msg = new Message(generateId(), doc);
-      } else {
-         msg.setId(generateId());
+      
+      if (!msg.hasDocument()) {
+         throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
       }
+      
+      msg.addHeader("correlation-id", generateId());
 
       outSlot.setMessage(msg);
    }

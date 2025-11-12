@@ -1,4 +1,8 @@
-package iia.dsl.framework;
+package iia.dsl.framework.ports;
+
+import iia.dsl.framework.connectors.Connector;
+import iia.dsl.framework.core.Element;
+import iia.dsl.framework.core.Slot;
 
 public abstract class Port extends Element {
     protected Connector connector;

@@ -1,4 +1,4 @@
-package iia.dsl.framework;
+package iia.dsl.framework.util;
 
 import org.w3c.dom.Document;
 import java.util.Collections;

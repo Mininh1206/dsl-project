@@ -1,33 +1,32 @@
 package iia.dsl.framework.tasks.modifiers;
 
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.util.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import iia.dsl.framework.core.Message;
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.util.TestUtils;
 
 public class ContextEnricherTest {
 
     private Slot inputSlot;
     private Slot outputSlot;
-    private String testMessageId;
     
     // XML simple para enriquecer
     private static final String ENRICH_SAMPLE_XML = "<report><data>value</data></report>";
 
     @BeforeEach
     void setUp() throws Exception {
-        // Configurar el slot de entrada con un documento y un ID específico
-        testMessageId = "MSG_" + System.currentTimeMillis();
         Document doc = TestUtils.createXMLDocument(ENRICH_SAMPLE_XML);
         
         inputSlot = new Slot("input");
-        inputSlot.setDocument(doc);
-        inputSlot.getMessage().setId(testMessageId); // Establecer el ID que debe ser enriquecido
+        inputSlot.setMessage(new Message(doc));
 
         outputSlot = new Slot("output");
     }
@@ -59,7 +58,7 @@ public class ContextEnricherTest {
         String timestamp = contextElement.getAttribute("timestamp");
         
         assertEquals("ContextEnricher", enrichedBy, "El atributo 'enrichedBy' debe ser 'ContextEnricher'.");
-        assertEquals(testMessageId, messageId, "El 'messageId' del contexto debe coincidir con el ID de entrada.");
+        assertEquals(inputSlot.getMessage().getId(), messageId, "El 'messageId' del contexto debe coincidir con el ID de entrada.");
         assertFalse(timestamp.isEmpty(), "El 'timestamp' no debe estar vacío.");
         
         // Assert 4: Verificar que el documento original no fue modificado (Inmutabilidad)

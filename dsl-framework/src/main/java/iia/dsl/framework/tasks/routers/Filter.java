@@ -1,10 +1,11 @@
 package iia.dsl.framework.tasks.routers;
 
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.Task;
-import iia.dsl.framework.TaskType;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.tasks.Task;
+import iia.dsl.framework.tasks.TaskType;
 
 public class Filter extends Task {
     private final String xpath;

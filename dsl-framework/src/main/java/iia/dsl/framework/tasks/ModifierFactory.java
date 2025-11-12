@@ -1,6 +1,7 @@
-package iia.dsl.framework;
+package iia.dsl.framework.tasks;
 
-import iia.dsl.framework.tasks.modifiers.*;
+import iia.dsl.framework.tasks.modifiers.ContextSlimmer;
+import iia.dsl.framework.tasks.modifiers.Slimmer;
 
 public class ModifierFactory extends TaskFactory {
     @Override

@@ -1,11 +1,13 @@
 package iia.dsl.framework.tasks.routers;
 
-import iia.dsl.framework.Message;
-import iia.dsl.framework.Slot;
-import iia.dsl.framework.Task;
-import iia.dsl.framework.TaskType;
 import java.util.List;
+
 import org.w3c.dom.Document;
+
+import iia.dsl.framework.core.Message;
+import iia.dsl.framework.core.Slot;
+import iia.dsl.framework.tasks.Task;
+import iia.dsl.framework.tasks.TaskType;
 
 /**
  * Merger Task - Router que combina múltiples flujos de entrada en uno de salida.

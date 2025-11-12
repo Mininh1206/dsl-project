@@ -1,4 +1,4 @@
-package iia.dsl.framework;
+package iia.dsl.framework.tasks;
 
 public abstract class TaskFactory {
     public abstract Task createTask(String id, String taskName);

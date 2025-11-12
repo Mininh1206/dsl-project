@@ -1,14 +1,15 @@
 package iia.dsl.framework.tasks.routers;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.Slot;
+import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
-import java.util.List;
 
 /**
  * Test unitario para la tarea Merger.
@@ -65,14 +66,10 @@ public class MergerTest {
         // Act
         merger.execute();
         
-        // Assert
-        // Como Slot solo almacena un mensaje a la vez, el último procesado prevalece
-        // En este caso, doc3 (último input slot)
         Document result = output.getDocument();
         assertNotNull(result, "Output document should not be null");
-        
-        String source = result.getElementsByTagName("source").item(0).getTextContent();
-        assertEquals("Input3", source, "Should contain content from last input slot");
+
+        assertEquals(3, output.getMessageCount(), "Output should contain the three merged messages");
     }
     
     @Test

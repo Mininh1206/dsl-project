@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.Slot;
+import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
 public class FilterTest {
