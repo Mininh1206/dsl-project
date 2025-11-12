@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
@@ -22,8 +23,8 @@ public class SlimmerTest {
 
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
-
-        inputSlot.setDocument(doc);
+        
+        inputSlot.setMessage(new Message(inputSlot.getMessageId(), doc));
 
         // Configurar Slimmer para remover el header
         Slimmer slimmer = new Slimmer("test-slimmer", inputSlot, outputSlot, "/order/header");
@@ -51,7 +52,7 @@ public class SlimmerTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
 
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(inputSlot.getMessageId(), doc));
 
         Slimmer slimmer = new Slimmer("test-slimmer", inputSlot, outputSlot, "invalid xpath expression");
 

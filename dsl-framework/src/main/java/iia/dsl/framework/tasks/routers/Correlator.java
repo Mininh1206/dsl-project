@@ -1,8 +1,6 @@
 
 package iia.dsl.framework.tasks.routers;
 
-import javax.xml.xpath.XPathFactory;
-
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -40,30 +38,6 @@ public class Correlator extends Task {
 
     @Override
     public void execute() throws Exception {
-        // Validar que hay al menos dos entradas y dos salidas
-        if (inputSlots.size() < 2 || outputSlots.size() < 2) {
-            throw new IllegalArgumentException("Debe haber al menos 2 entradas y 2 salidas.");
-        }
-
-        var doc1 = inputSlots.get(0).getDocument();
-        var doc2 = inputSlots.get(1).getDocument();
-        
-        if (doc1 == null || doc2 == null) {
-            throw new IllegalArgumentException("No hay documentos en los slots de entrada");
-        }
-        
-        var xf = XPathFactory.newInstance();
-        var x = xf.newXPath();
-        var ce = x.compile(correlationXPath);
-        
-        // Extraer valores de correlación
-        String value1 = ce.evaluate(doc1);
-        String value2 = ce.evaluate(doc2);
-        
-        // Si los valores coinciden, enviar a las salidas correspondientes
-        if (value1 != null && value1.equals(value2)) {
-            outputSlots.get(0).setDocument(doc1);
-            outputSlots.get(1).setDocument(doc2);
-        }
+        // TODO
     }
 }

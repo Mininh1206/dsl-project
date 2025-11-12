@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -23,7 +24,8 @@ public class Replicator extends Task {
 
     @Override
     public void execute() throws Exception {
-        Document d = inputSlots.get(0).getDocument();
+        var in = inputSlots.get(0);
+        Document d = in.getDocument();
         
         if (d == null) {
             throw new Exception("Replicator '" + id + "' no tiene documento para duplicar.");
@@ -31,9 +33,7 @@ public class Replicator extends Task {
 
        
         for (Slot outputSlot : outputSlots) {
-            Document docCopy = (Document) d.cloneNode(true);
-            outputSlot.setDocument(docCopy);
-            System.out.println("Replicator '" + id + "' duplicó mensaje a slot: " + outputSlot.getId());
+            outputSlot.setMessage(new Message(in.getMessageId(), (Document) d.cloneNode(true)));
         }
     }
 }

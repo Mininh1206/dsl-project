@@ -1,8 +1,9 @@
 package iia.dsl.framework.util;
 
-import org.w3c.dom.Document;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.w3c.dom.Document;
 
 /**
  * Singleton para almacenamiento en memoria de Documentos XML y listas de Secuencia.
@@ -35,11 +36,12 @@ public class Storage {
 
    
     public Document retrieveDocument(String key) {
-        return documentStore.get(key);
-    }
-   
-    public Document getDocument(String key) {
-        return retrieveDocument(key);
+        if (key == null) return null;
+
+        var doc = documentStore.get(key);
+        documentStore.remove(key);
+        
+        return doc;
     }
 
     public void removeDocument(String key) {

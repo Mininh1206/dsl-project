@@ -42,8 +42,8 @@ public class CorrelationIdSetterTest {
 
 		Slot input = new Slot("in");
 		Slot output = new Slot("out");
-
-		input.setDocument(doc);
+		
+		input.setMessage(new Message(input.getMessageId(), doc));
 
 		CorrelationIdSetter setter = new CorrelationIdSetter("cis-2", input, output);
 		setter.execute();

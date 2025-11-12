@@ -1,23 +1,18 @@
 package iia.dsl.framework.tasks.transformers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
+import iia.dsl.framework.util.Storage;
 
 /**
  * Aggregator Task - Transformer que reconstruye mensajes divididos previamente.
@@ -31,16 +26,8 @@ public class Aggregator extends Task {
 
     private final String itemXPath;
 
-    private final Map<String, List<Message>> messages;
+    private final Map<String, Message[]> messages;
 
-    /**
-     * Constructor del Aggregator.
-     * 
-     * @param id Identificador único de la tarea
-     * @param inputSlot Slot de entrada con los fragmentos a agregar
-     * @param outputSlot Slot de salida donde se escribirá el documento agregado
-     * @param wrapperElementName Nombre del elemento raíz para el documento agregado
-     */
     public Aggregator(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
         super(id, TaskType.TRANSFORMER);
         
@@ -49,30 +36,66 @@ public class Aggregator extends Task {
         messages = new HashMap<>();
         this.itemXPath = itemXPath;
     }
-    
-    
-    public Aggregator(String id, Slot inputSlot, Slot outputSlot) {
-        this(id, inputSlot, outputSlot, "aggregated");
-    }
 
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
+
         if (!in.hasMessage()) {
             throw new Exception("No hay Mensaje en el slot de entrada para Aggregator");
         }
+
         var m = in.getMessage();
+
         if (!m.hasDocument()) {
             throw new Exception("No hay Documento en el slot de entrada para Aggregator");
         }
-        var d = m.getDocument();
 
-        if(messages.containsKey(m.getId())) {
-            messages.get(m.getId()).add(m);
-        } else {
-            messages.put(m.getId(), List.of(m));
+        if (!m.hasHeader(Message.NUM_FRAG) || !m.hasHeader(Message.TOTAL_FRAG)) {
+            throw new Exception("El mensaje no contiene los headers necesarios para la agregación");
         }
-        
+
+        var numFrag = Integer.parseInt(m.getHeader(Message.NUM_FRAG));
+        var totalFrag = Integer.parseInt(m.getHeader(Message.TOTAL_FRAG));
+
+        if (!messages.containsKey(m.getId())) {
+            messages.put(m.getId(), new Message[totalFrag]);
+        }
+
+        messages.get(m.getId())[numFrag] = m;
+
+        // Verificar si todos los fragmentos han sido recibidos
+        boolean allReceived = true;
+        for (Message msg : messages.get(m.getId())) {
+            if (msg == null) {
+                allReceived = false;
+                break;
+            }
+        }
+
+        if (allReceived) {
+            var storage = Storage.getInstance();
+
+            // Reconstruir el documento completo con el documento almacenado y los fragmentos recibidos en el xpath
+            
+            var doc = storage.retrieveDocument(m.getId());
+
+            if (doc == null) {
+                throw new Exception("No se encontró el documento original almacenado para el mensaje ID: "
+                        + m.getId());
+            }
+            
+            var xf = XPathFactory.newInstance();
+            var x = xf.newXPath();
+            var ce = x.compile(itemXPath);
+            var nodeOfList = (Node) ce.evaluate(doc, XPathConstants.NODE);
+
+            for (Message msg : messages.get(m.getId())) {
+                nodeOfList.appendChild(msg.getDocument());
+            }
+
+            outputSlots.get(0).setMessage(new Message(m.getId(), doc));
+        }
     }
 }
 

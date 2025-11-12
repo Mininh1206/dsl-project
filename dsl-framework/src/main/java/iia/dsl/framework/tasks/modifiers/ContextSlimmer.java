@@ -1,12 +1,5 @@
 package iia.dsl.framework.tasks.modifiers;
 
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -44,35 +37,6 @@ public class ContextSlimmer extends Task {
     
     @Override
     public void execute() throws Exception {
-        var d = inputSlots.get(0).getDocument();
-        
-        if (d == null) {
-            throw new Exception("No hay ningún documento para procesar");
-        }
-        
-        var xf = XPathFactory.newInstance();
-        var x = xf.newXPath();
-        
-        var ce = x.compile(xpath);
-        
-        // Clonar el documento para no modificar el original
-        var dr = (Document) d.cloneNode(true);
-        
-        // Evaluar XPath para encontrar todos los nodos que coincidan
-        var nodeList = ce.evaluate(dr, XPathConstants.NODESET);
-        
-        if (nodeList != null && nodeList instanceof NodeList) {
-            NodeList nodes = (NodeList) nodeList;
-            
-            // Eliminar todos los nodos encontrados (iterar en reversa para evitar problemas de índice)
-            for (int i = nodes.getLength() - 1; i >= 0; i--) {
-                Node node = nodes.item(i);
-                if (node != null && node.getParentNode() != null) {
-                    node.getParentNode().removeChild(node);
-                }
-            }
-        }
-        
-        outputSlots.get(0).setDocument(dr);
+        // TODO
     }
 }

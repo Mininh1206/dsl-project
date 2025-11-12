@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 
 class DistributorTest {
@@ -59,7 +60,7 @@ class DistributorTest {
     void testRouteToMatchingSlot() throws Exception {
         String xml = "<order type='urgent'><item>Product A</item></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order[@type='urgent']", outputSlotA);
@@ -77,7 +78,7 @@ class DistributorTest {
     void testRouteToDefaultSlot() throws Exception {
         String xml = "<order type='express'><item>Product B</item></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order[@type='urgent']", outputSlotA);
@@ -93,7 +94,7 @@ class DistributorTest {
     
     @Test
     void testNoDocumentInInputSlot() throws Exception {
-        inputSlot.setDocument(null);
+        inputSlot.setMessage(null);
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order[@type='urgent']", outputSlotA);
@@ -108,7 +109,7 @@ class DistributorTest {
     void testFirstMatchingRuleWins() throws Exception {
         String xml = "<order type='urgent' priority='high'><item>Product C</item></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order[@type='urgent']", outputSlotA);
@@ -125,7 +126,7 @@ class DistributorTest {
     void testDocumentCloning() throws Exception {
         String xml = "<order><item>Product D</item></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order", outputSlotA);
@@ -141,7 +142,7 @@ class DistributorTest {
     void testNullDefaultSlot() throws Exception {
         String xml = "<order type='express'><item>Product E</item></order>";
         Document doc = createXmlDocument(xml);
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Map<String, Slot> rules = new HashMap<>();
         rules.put("//order[@type='urgent']", outputSlotA);

@@ -46,17 +46,6 @@ public class Slot extends Element {
     public Document getDocument() {
         return messages.peek() != null ? messages.peek().getDocument() : null;
     }
-
-    /**
-     * Establece el documento en el mensaje actual.
-     */
-    public void setDocument(Document document) {
-        if (!messages.isEmpty()) {
-            messages.peek().setDocument(document);
-        } else {
-            messages.add(new Message(document));
-        }
-    }
     
     /**
      * Obtiene el ID del mensaje actual.

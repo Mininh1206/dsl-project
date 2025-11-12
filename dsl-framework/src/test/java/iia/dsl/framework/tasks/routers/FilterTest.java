@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
@@ -22,7 +23,7 @@ public class FilterTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         // Filtrar órdenes con más de 2 items
         Filter filter = new Filter("test-filter", inputSlot, outputSlot, 
@@ -44,7 +45,7 @@ public class FilterTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         // Filtrar órdenes con al menos 1 item
         Filter filter = new Filter("test-filter", inputSlot, outputSlot, 
@@ -66,7 +67,7 @@ public class FilterTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Filter filter = new Filter("test-filter", inputSlot, outputSlot, "invalid xpath expression");
         

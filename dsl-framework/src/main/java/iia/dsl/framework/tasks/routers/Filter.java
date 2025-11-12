@@ -3,6 +3,7 @@ package iia.dsl.framework.tasks.routers;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -21,7 +22,8 @@ public class Filter extends Task {
     
     @Override
     public void execute() throws XPathExpressionException {
-        var d = inputSlots.get(0).getDocument();
+        var in = inputSlots.get(0);
+        var d = in.getDocument();
         
         var xf = XPathFactory.newInstance();
         var x = xf.newXPath();
@@ -30,7 +32,7 @@ public class Filter extends Task {
         var result = ce.evaluate(d, javax.xml.xpath.XPathConstants.NUMBER);
         
         if (result instanceof Number && ((Number)result).doubleValue() == 1.0) {
-            outputSlots.get(0).setDocument(d);
+            outputSlots.get(0).setMessage(new Message(in.getMessageId(), d));
         }
     }
 }

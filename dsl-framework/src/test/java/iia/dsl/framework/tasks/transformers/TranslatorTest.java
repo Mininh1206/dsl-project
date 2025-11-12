@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
@@ -35,7 +36,7 @@ public class TranslatorTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         Translator translator = new Translator("test-translator", inputSlot, outputSlot, SIMPLE_XSLT);
         
@@ -80,7 +81,7 @@ public class TranslatorTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         String invalidXslt = "<?xml version='1.0'?><invalid>not xslt</invalid>";
         Translator translator = new Translator("test-translator", inputSlot, outputSlot, invalidXslt);
@@ -99,7 +100,7 @@ public class TranslatorTest {
         Slot inputSlot = new Slot("input");
         Slot outputSlot = new Slot("output");
         
-        inputSlot.setDocument(doc);
+        inputSlot.setMessage(new Message(doc));
         
         // XSLT de identidad: copia todo tal cual
         String identityXslt = """

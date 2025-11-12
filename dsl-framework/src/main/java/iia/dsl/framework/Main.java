@@ -20,6 +20,7 @@ import iia.dsl.framework.connectors.Connector;
 import iia.dsl.framework.connectors.ConsoleConnector;
 import iia.dsl.framework.connectors.MockConnector;
 import iia.dsl.framework.core.Flow;
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
@@ -108,7 +109,8 @@ public class Main {
             Slot afterFilterSlot = new Slot("afterFilter");
             Slot afterSlimmerSlot = new Slot("afterSlimmer");
             Slot outputSlot = new Slot("output");
-            inputSlot.setDocument(orderDoc);
+            
+            inputSlot.setMessage(new Message(inputSlot.getMessageId(), orderDoc));
             // === PASO 2: Configurar Tasks ===
 
             // Filter: Solo pedidos con 2 o más items

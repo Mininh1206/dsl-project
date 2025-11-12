@@ -6,6 +6,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -24,7 +25,8 @@ public class Slimmer extends Task {
     
     @Override
     public void execute() throws Exception {
-        var d = inputSlots.get(0).getDocument();
+        var in = inputSlots.get(0);
+        var d = in.getDocument();
         
         if (d == null) {
             throw new Exception("No hay ningun documento para leer");
@@ -43,7 +45,8 @@ public class Slimmer extends Task {
 
             if (nodeToRemove != null && nodeToRemove instanceof Node) {
                 ((Node)nodeToRemove).getParentNode().removeChild((Node)nodeToRemove);
-                outputSlots.get(0).setDocument(dr);
+                
+                outputSlots.get(0).setMessage(new Message(in.getMessageId(), dr));
             }
         }
     }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.TestUtils;
 
@@ -55,9 +56,9 @@ public class MergerTest {
         Slot input3 = new Slot("input3");
         Slot output = new Slot("output");
         
-        input1.setDocument(doc1);
-        input2.setDocument(doc2);
-        input3.setDocument(doc3);
+        input1.setMessage(new Message(doc1));
+        input2.setMessage(new Message(doc2));
+        input3.setMessage(new Message(doc3));
         
         Merger merger = new Merger("test-merger", 
             List.of(input1, input2, input3), 
@@ -90,7 +91,7 @@ public class MergerTest {
         Slot input3 = new Slot("input3"); // Vacío
         Slot output = new Slot("output");
         
-        input1.setDocument(doc1);
+        input1.setMessage(new Message(doc1));
         // input2 e input3 quedan sin documento
         
         Merger merger = new Merger("test-merger", 
@@ -138,7 +139,7 @@ public class MergerTest {
         Slot input = new Slot("input");
         Slot output = new Slot("output");
         
-        input.setDocument(doc);
+        input.setMessage(new Message(doc));
         
         Merger merger = new Merger("test-merger", 
             List.of(input), 
@@ -186,8 +187,8 @@ public class MergerTest {
         Slot branch2 = new Slot("branch2");
         Slot output = new Slot("output");
         
-        input1.setDocument(doc1);
-        input2.setDocument(doc2);
+        input1.setMessage(new Message(doc1));
+        input2.setMessage(new Message(doc2));
         
         // Filtros que aceptan órdenes con al menos 1 item
         Filter filter1 = new Filter("filter1", input1, branch1, 

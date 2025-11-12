@@ -2,9 +2,6 @@ package iia.dsl.framework.tasks.routers;
 
 import java.util.List;
 
-import org.w3c.dom.Document;
-
-import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
@@ -53,20 +50,11 @@ public class Merger extends Task {
         
         // Iterar sobre TODOS los inputSlots
         for (Slot inputSlot : inputSlots) {
-            // Leer documento del slot de entrada
-            Document doc = inputSlot.getDocument();
-            
-            // Si hay documento, pasarlo al outputSlot
-            if (doc != null) {
-                // Intentar obtener el mensaje completo (con ID) si existe
-                Message msg = inputSlot.getMessage();
-                
-                if (msg != null) {
-                    // Pasar el mensaje completo (preserva ID)
+            if (inputSlot.hasMessage()) {
+                var msg = inputSlot.getMessage();
+
+                if (msg.hasDocument()) {
                     outputSlot.setMessage(msg);
-                } else {
-                    // Fallback: crear mensaje nuevo con el documento
-                    outputSlot.setDocument(doc);
                 }
             }
         }
