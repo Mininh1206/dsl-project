@@ -28,6 +28,7 @@ class DistributorTest {
     private DocumentBuilderFactory factory;
     
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         inputSlot = new Slot("input-slot");
         outputSlotA = new Slot("output-slot-a");

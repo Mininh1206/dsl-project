@@ -28,6 +28,7 @@ class ReplicatorTest {
     private DocumentBuilderFactory factory;
     
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         inputSlot = new Slot("input-slot");
         outputSlot1 = new Slot("output-slot-1");

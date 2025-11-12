@@ -49,7 +49,7 @@ public class Correlator extends Task {
         var doc2 = inputSlots.get(1).getDocument();
         
         if (doc1 == null || doc2 == null) {
-            throw new Exception("No hay documentos en los slots de entrada");
+            throw new IllegalArgumentException("No hay documentos en los slots de entrada");
         }
         
         var xf = XPathFactory.newInstance();

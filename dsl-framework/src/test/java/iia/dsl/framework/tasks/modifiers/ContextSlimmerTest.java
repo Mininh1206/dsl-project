@@ -1,5 +1,7 @@
 package iia.dsl.framework.tasks.modifiers;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -190,9 +192,12 @@ public class ContextSlimmerTest {
             "invalid xpath [[[");
         
         // Act & Assert
-        assertThrows(Exception.class, () -> {
+        var exception = assertThrows(Exception.class, () -> {
             slimmer.execute();
         });
+
+        assertTrue(exception instanceof  XPathExpressionException, 
+            "Invalid XPath should throw XPathExpressionException");
     }
 
     @Test

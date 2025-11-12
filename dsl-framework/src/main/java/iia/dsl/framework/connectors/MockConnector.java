@@ -3,7 +3,7 @@ package iia.dsl.framework.connectors;
 import org.w3c.dom.Document;
 
 public class MockConnector extends Connector {
-    private Document mockDocument;
+    private final Document mockDocument;
     
     public MockConnector(String id, Document mockDocument) {
         super(id);

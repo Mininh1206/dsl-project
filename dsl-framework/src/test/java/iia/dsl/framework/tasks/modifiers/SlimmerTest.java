@@ -3,6 +3,10 @@ package iia.dsl.framework.tasks.modifiers;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import javax.xml.xpath.XPathExpressionException;
+
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -52,8 +56,11 @@ public class SlimmerTest {
         Slimmer slimmer = new Slimmer("test-slimmer", inputSlot, outputSlot, "invalid xpath expression");
 
         // Act & Assert - Esperamos que lance excepción
-        assertThrows(Exception.class, () -> {
+        var exception = assertThrows(Exception.class, () -> {
             slimmer.execute();
         });
+
+        assertTrue(exception instanceof  XPathExpressionException, 
+            "Invalid XPath should throw XPathExpressionException");
     }
 }

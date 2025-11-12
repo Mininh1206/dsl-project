@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
@@ -31,7 +32,7 @@ public class Splitter extends Task {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             this.docBuilder = factory.newDocumentBuilder();
-        } catch (Exception e) {
+        } catch (ParserConfigurationException e) {
             throw new RuntimeException("Error initializing DocumentBuilder for Splitter", e);
         }
     }

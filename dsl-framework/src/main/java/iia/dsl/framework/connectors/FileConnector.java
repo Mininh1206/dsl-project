@@ -1,14 +1,17 @@
 package iia.dsl.framework.connectors;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class FileConnector extends Connector {
-    private String filePath;
+    private final String filePath;
     
     public FileConnector(String id, String filePath) {
         super(id);
@@ -22,7 +25,7 @@ public class FileConnector extends Connector {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(new File(filePath));
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException("Error reading file: " + filePath, e);
         }
     }

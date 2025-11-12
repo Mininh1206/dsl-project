@@ -22,6 +22,7 @@ public class ContextEnricherTest {
     private static final String ENRICH_SAMPLE_XML = "<report><data>value</data></report>";
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() throws Exception {
         Document doc = TestUtils.createXMLDocument(ENRICH_SAMPLE_XML);
         

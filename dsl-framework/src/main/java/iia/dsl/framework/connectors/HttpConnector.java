@@ -3,7 +3,7 @@ package iia.dsl.framework.connectors;
 import org.w3c.dom.Document;
 
 public class HttpConnector extends Connector {
-    private String url;
+    private final String url;
     
     public HttpConnector(String id, String url) {
         super(id);

@@ -3,7 +3,6 @@ package iia.dsl.framework.tasks.modifiers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;

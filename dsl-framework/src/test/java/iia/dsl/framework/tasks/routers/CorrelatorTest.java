@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -97,7 +99,9 @@ public class CorrelatorTest {
 
 		Correlator c = new Correlator("corr3", in1, in2, out1, out2, "/order/id");
 
-		assertThrows(Exception.class, () -> c.execute(), "Debe lanzar excepción si falta documento en entradas");
+		var exception = assertThrows(Exception.class, () -> c.execute(), "Debe lanzar excepción si falta documento en entradas");
+
+		assertTrue(exception instanceof IllegalArgumentException, "Debe lanzar IllegalArgumentException si falta documento en entradas");
 	}
 
 	/**
