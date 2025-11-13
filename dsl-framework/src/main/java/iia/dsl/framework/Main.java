@@ -204,10 +204,10 @@ public class Main {
             
             // Flow
             Flow flow = new Flow("orderProcessing");
-            flow.addPort(input);
-            flow.addPort(output);
-            flow.addTask(filter);
-            flow.addTask(translator);
+            flow.addElement(input);
+            flow.addElement(output);
+            flow.addElement(filter);
+            flow.addElement(translator);
             
             // === EJECUCIÓN ===
             flow.execute();

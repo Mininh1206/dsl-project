@@ -3,10 +3,10 @@ package iia.dsl.framework.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
-import iia.dsl.framework.core.Element;
+import iia.dsl.framework.core.ExecutableElement;
 import iia.dsl.framework.core.Slot;
 
-public abstract class Task extends Element {
+public abstract class Task extends ExecutableElement {
     protected final List<Slot> inputSlots;
     protected final List<Slot> outputSlots;
     protected final TaskType type;
@@ -33,8 +33,6 @@ public abstract class Task extends Element {
     public List<Slot> getOutputSlots() {
         return outputSlots;
     }
-    
-    public abstract void execute() throws Exception;
 
     public String getType() {
         return this.getClass().getName();
