@@ -17,15 +17,15 @@ public class RouterFactory {
         return new Correlator(id, inputSlot, outputSlot);
     }
 
-    public Merger createMergerTask(String id, java.util.List<Slot> inputSlots, Slot outputSlot) {
+    public Merger createMergerTask(String id, List<Slot> inputSlots, Slot outputSlot) {
         return new Merger(id, inputSlots, outputSlot);
     }
 
-    public Distributor createDistributorTask(String id, Slot inputSlot, java.util.List<Slot> outputSlots) {
-        throw new UnsupportedOperationException("Distributor not implemented yet");
+    public Distributor createDistributorTask(String id, Slot inputSlot, List<Slot> outputSlot, List<String> xPath) {
+        return new Distributor(id, inputSlot, outputSlot, xPath);
     }
 
-    public Replicator createReplicatorTask(String id, Slot inputSlot, java.util.List<Slot> outputSlots) {
-        throw new UnsupportedOperationException("Replicator not implemented yet");
+    public Replicator createReplicatorTask(String id, Slot inputSlot, List<Slot> outputSlots) {
+        return new Replicator(id, inputSlot, outputSlots);
     }
 }
