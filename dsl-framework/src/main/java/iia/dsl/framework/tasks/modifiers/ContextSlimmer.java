@@ -41,7 +41,7 @@ public class ContextSlimmer extends Task {
             }
 
             // Saca el nodo a eliminar usando el xpath del mensaje de contexto
-            xpath = contextNode.getNodeValue();
+            xpath = contextNode.getFirstChild().getNodeValue();
             xpathExpr = xpathFactory.newXPath().compile(xpath);
             var removeNode = (Node) xpathExpr.evaluate(m.getDocument(), XPathConstants.NODE);
             if (removeNode == null) {

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.connectors.FileConnector;
+import iia.dsl.framework.connectors.ConsoleConnector;
 import iia.dsl.framework.connectors.MockConnector;
 import iia.dsl.framework.core.Flow;
 import iia.dsl.framework.core.Slot;
@@ -21,6 +21,7 @@ public class Main {
 
     // XML de entrada: pedido de productos de cafe y coca-cola
     private static final String ORDER_1 = """
+            <?xml version="1.0" encoding="UTF-8"?>
             <cafe_order>
             <order_id>1</order_id>
             <drinks>
@@ -37,6 +38,7 @@ public class Main {
                                     """;
 
     private static final String ORDER_COLD = """
+            <?xml version="1.0" encoding="UTF-8"?>
             <drink>
             <name>coca-cola</name>
             <state>ready</state>
@@ -44,6 +46,7 @@ public class Main {
                                     """;
 
     private static final String ORDER_HOT = """
+            <?xml version="1.0" encoding="UTF-8"?>
             <drink>
             <name>cafe</name>
             <state>ready</state>
@@ -51,6 +54,7 @@ public class Main {
                                     """;
 
     private static final String ORDER_CONTEXT_XSLT = """
+            <?xml version="1.0" encoding="UTF-8"?>
             <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 
                 <xsl:output method="xml" indent="yes"/>
@@ -70,6 +74,7 @@ public class Main {
                                     """;
 
     private static final String ORDER_XSLT = """
+            <?xml version="1.0" encoding="UTF-8"?>
             <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 <xsl:output method="xml" indent="yes"/>
 
@@ -138,21 +143,19 @@ public class Main {
 
             var outputSlotMerger = new Slot();
 
-            var outputSlotAggregator = new Slot();
-
             var outputSlotSystem = new Slot();
 
             // === PASO 2: Configurar Connectors ===
             var mockConnectorInput = new MockConnector(orderDoc);
             var mockConnectorFrias = new MockConnector(createXMLDocument(ORDER_COLD));
             var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
-            var fileConnectorOutput = new FileConnector("comanda.xml");
+            var consoleConnectorOutput = new ConsoleConnector();
 
             // === PASO 3: Configurar Ports ===
             var inputPort = new InputPort(mockConnectorInput, inputSlotSystem);
             var requestPortFrias = new RequestPort("requestPortFrias", mockConnectorFrias, inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
             var requestPortCalientes = new RequestPort("requestPortCalientes", mockConnectorCalientes, inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
-            var outputPort = new OutputPort("outputPort", fileConnectorOutput, outputSlotSystem);
+            var outputPort = new OutputPort("outputPort", consoleConnectorOutput, outputSlotSystem);
 
             // === PASO 5: Configurar Tasks Factories ===
             var modifierFactory = new ModifierFactory();
@@ -180,7 +183,7 @@ public class Main {
 
             var merger = routerFactory.createMergerTask("merger", List.of(outputSlotContextEnricher1, outputSlotContextEnricher2), outputSlotMerger);
 
-            var aggregator = transformerFactory.createAggregatorTask("aggregator", outputSlotMerger, outputSlotAggregator, "/cafe_order/drinks");
+            var aggregator = transformerFactory.createAggregatorTask("aggregator", outputSlotMerger, outputSlotSystem, "/cafe_order/drinks");
 
             // === PASO 7: Configurar Flow ===
             Flow flow = new Flow();

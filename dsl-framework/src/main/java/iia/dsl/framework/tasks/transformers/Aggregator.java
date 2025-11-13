@@ -87,10 +87,12 @@ public class Aggregator extends Task {
                 var nodeOfList = (Node) ce.evaluate(doc, XPathConstants.NODE);
 
                 for (Message msg : messages.get(m.getId())) {
-                    nodeOfList.appendChild(msg.getDocument());
+                    var itemNode = doc.importNode(
+                            msg.getDocument().getDocumentElement(), true);
+                    nodeOfList.appendChild(itemNode);
                 }
 
-                outputSlots.get(0).setMessage(new Message(m.getId(), doc));
+                outputSlots.get(0).setMessage(new Message(m.getId(), doc, m.getHeaders()));
             }
         }
     }

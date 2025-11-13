@@ -49,10 +49,10 @@ public class TranslatorTest {
         assertEquals("summary", result.getDocumentElement().getNodeName(), 
                 "Root element should be 'summary'");
         
-        String orderId = result.getElementsByTagName("orderId").item(0).getNodeValue();
+        String orderId = result.getElementsByTagName("orderId").item(0).getFirstChild().getNodeValue();
         assertEquals("12345", orderId, "OrderId should be preserved");
         
-        String itemCount = result.getElementsByTagName("itemCount").item(0).getNodeValue();
+        String itemCount = result.getElementsByTagName("itemCount").item(0).getFirstChild().getNodeValue();
         assertEquals("2", itemCount, "Item count should be 2");
     }
     

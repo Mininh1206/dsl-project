@@ -60,7 +60,7 @@ public class ContextEnricher extends Task {
             }
 
             // Saca el nodo a enriquecer usando el xpath del mensaje de contexto
-            xpath = contextNode.getNodeValue();
+            xpath = contextNode.getFirstChild().getNodeValue();
             xpathExpr = xpathFactory.newXPath().compile(xpath);
             var enrichNode = (Node) xpathExpr.evaluate(m.getDocument(), XPathConstants.NODE);
             if (enrichNode == null) {

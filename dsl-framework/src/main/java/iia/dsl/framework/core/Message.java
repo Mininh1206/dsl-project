@@ -33,6 +33,12 @@ public class Message extends Element {
         this.headers = new HashMap<>();
     }
 
+    public Message(Document doc, Map<String, String> headers) {
+        super();
+        this.document = doc;
+        this.headers = new HashMap<>(headers);
+    }
+
     public Message(Message other) {
         super(other.id);
         this.document = other.document;

@@ -43,6 +43,6 @@ public class RequestPort extends Port {
             responseDoc = DocumentUtil.applyXslt(responseDoc, xsltString);
         }
 
-        outputSlot.setMessage(new Message(responseDoc));
+        outputSlot.setMessage(new Message(responseDoc, m.getHeaders()));
     }
 }

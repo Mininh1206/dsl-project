@@ -102,7 +102,7 @@ public class MergerTest {
         
         assertTrue(output.hasMessage(), "Output should contain the document from input1");
         
-        String data = output.getMessage().getDocument().getElementsByTagName("data").item(0).getNodeValue();
+        String data = output.getMessage().getDocument().getElementsByTagName("data").item(0).getFirstChild().getNodeValue();
         assertEquals("Valid data", data);
     }
     
