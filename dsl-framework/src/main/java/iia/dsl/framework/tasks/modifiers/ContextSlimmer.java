@@ -10,7 +10,7 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 public class ContextSlimmer extends Task {
-    public ContextSlimmer(String id, Slot inputSlot, Slot contextSlot, Slot outputSlot) {
+    ContextSlimmer(String id, Slot inputSlot, Slot contextSlot, Slot outputSlot) {
         super(id, TaskType.MODIFIER);
 
         addInputSlot(inputSlot);

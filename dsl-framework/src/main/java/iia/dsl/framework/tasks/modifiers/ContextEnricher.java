@@ -12,7 +12,7 @@ import iia.dsl.framework.tasks.TaskType;
 
 public class ContextEnricher extends Task {
     
-    public ContextEnricher(String id, Slot input, Slot context, Slot output) {
+    ContextEnricher(String id, Slot input, Slot context, Slot output) {
         super(id, TaskType.MODIFIER);
         
         if (input != null) addInputSlot(input);

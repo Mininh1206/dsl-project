@@ -1,7 +1,6 @@
 
 package iia.dsl.framework.tasks.routers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class Correlator extends Task {
     private final Map<String, Message[]> messages;
     private final Optional<String> xPath;
 
-    public Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot) {
+    Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot) {
         super(id, TaskType.ROUTER);
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
@@ -39,7 +38,7 @@ public class Correlator extends Task {
         this.xPath = Optional.empty();
     }
 
-    public Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot, String xPath) {
+    Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot, String xPath) {
         super(id, TaskType.ROUTER);
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;

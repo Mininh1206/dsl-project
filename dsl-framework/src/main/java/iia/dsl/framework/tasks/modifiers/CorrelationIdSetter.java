@@ -17,7 +17,7 @@ public class CorrelationIdSetter extends Task {
 
    private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-   public CorrelationIdSetter(String id, Slot inputSlot, Slot outputSlot) {
+   CorrelationIdSetter(String id, Slot inputSlot, Slot outputSlot) {
       super(id, TaskType.MODIFIER);
       addInputSlot(inputSlot);
       addOutputSlot(outputSlot);

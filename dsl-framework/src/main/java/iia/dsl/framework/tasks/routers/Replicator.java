@@ -11,7 +11,7 @@ import iia.dsl.framework.tasks.TaskType;
 
 public class Replicator extends Task {
 
-    public Replicator(String id, Slot inputSlot, List<Slot> outputSlots) {
+    Replicator(String id, Slot inputSlot, List<Slot> outputSlots) {
         super(id, TaskType.ROUTER);
         
         addInputSlot(inputSlot);

@@ -1,7 +1,6 @@
 package iia.dsl.framework.tasks.routers;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.xpath.XPathFactory;
 
@@ -16,7 +15,7 @@ public class Distributor extends Task {
     private final List<Slot> outputSlot;
     private final List<String> xPath;
 
-    public Distributor(String id, Slot inputSlot, List<Slot> outputSlot, List<String> xPath) {
+    Distributor(String id, Slot inputSlot, List<Slot> outputSlot, List<String> xPath) {
         super(id, TaskType.ROUTER);
 
         this.xPath = xPath;

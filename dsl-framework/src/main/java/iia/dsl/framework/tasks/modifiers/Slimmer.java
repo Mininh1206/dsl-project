@@ -14,7 +14,7 @@ import iia.dsl.framework.tasks.TaskType;
 public class Slimmer extends Task {
     private final String xpath;
 
-    public Slimmer(String id, Slot inputSlot, Slot outputSlot, String xpath) {
+    Slimmer(String id, Slot inputSlot, Slot outputSlot, String xpath) {
         super(id, TaskType.MODIFIER);
 
         addInputSlot(inputSlot);

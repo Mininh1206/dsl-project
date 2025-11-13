@@ -11,7 +11,7 @@ import iia.dsl.framework.tasks.TaskType;
 public class Filter extends Task {
     private final String xpath;
 
-    public Filter(String id, Slot inputSlot, Slot outputSlot, String xpath) {
+    Filter(String id, Slot inputSlot, Slot outputSlot, String xpath) {
         super(id, TaskType.ROUTER);
 
         addInputSlot(inputSlot);

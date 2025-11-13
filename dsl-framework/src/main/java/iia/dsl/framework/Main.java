@@ -26,6 +26,7 @@ import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.tasks.modifiers.Slimmer;
 import iia.dsl.framework.tasks.routers.Filter;
+import iia.dsl.framework.tasks.routers.RouterFactory;
 import iia.dsl.framework.tasks.transformers.Translator;
 
 public class Main {
@@ -113,9 +114,14 @@ public class Main {
             inputSlot.setMessage(new Message(inputSlot.getMessageId(), orderDoc));
             // === PASO 2: Configurar Tasks ===
 
+            // Factories
+            var routerFactory = new RouterFactory();
+            var transformerFactory = new iia.dsl.framework.tasks.transformers.TransformerFactory();
+            var modifierFactory = new iia.dsl.framework.tasks.modifiers.ModifierFactory();
+
             // Filter: Solo pedidos con 2 o más items
             System.out.println("FILTER: Verificando que el pedido tenga al menos 2 items...");
-            Filter filter = new Filter(
+            Filter filter = routerFactory.createFilterTask(
                     "orderFilter",
                     inputSlot,
                     afterFilterSlot,
@@ -131,7 +137,7 @@ public class Main {
             System.out.println();
             // Slimmer: Eliminar información sensible (email)
             System.out.println("SLIMMER: Eliminando información sensible (email)...");
-            Slimmer slimmer = new Slimmer(
+            Slimmer slimmer = modifierFactory.createSlimmerTask(
                     "emailRemover",
                     afterFilterSlot,
                     afterSlimmerSlot,
@@ -142,7 +148,7 @@ public class Main {
             System.out.println();
             // Translator: Convertir a formato de factura
             System.out.println("TRANSLATOR: Transformando pedido a formato de factura...");
-            Translator translator = new Translator(
+            Translator translator = transformerFactory.createTranslatorTask(
                     "orderToInvoice",
                     afterSlimmerSlot,
                     outputSlot,
@@ -188,9 +194,13 @@ public class Main {
             InputPort input = new InputPort("orderInput", fileInput, inputSlot);
             OutputPort output = new OutputPort("consoleOutput", consoleOutput, outputSlot);
             
+            // Factories
+            var routerFactory = new RouterFactory();
+            var transformerFactory = new iia.dsl.framework.tasks.transformers.TransformerFactory();
+
             // Tasks
-            Filter filter = new Filter("filter", inputSlot, processedSlot, "count(/order/items/item) >= 2");
-            Translator translator = new Translator("translator", processedSlot, outputSlot, INVOICE_XSLT);
+            Filter filter = routerFactory.createFilterTask("filter", inputSlot, processedSlot, "count(/order/items/item) >= 2");
+            Translator translator = transformerFactory.createTranslatorTask("translator", processedSlot, outputSlot, INVOICE_XSLT);
             
             // Flow
             Flow flow = new Flow("orderProcessing");

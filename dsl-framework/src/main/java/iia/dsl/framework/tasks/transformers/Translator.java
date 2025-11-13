@@ -18,7 +18,7 @@ import iia.dsl.framework.tasks.TaskType;
 public class Translator extends Task {
     private final String xslt;
 
-    public Translator(String id, Slot inputSlot, Slot outputSlot, String xslt) {
+    Translator(String id, Slot inputSlot, Slot outputSlot, String xslt) {
         super(id, TaskType.MODIFIER);
 
         addInputSlot(inputSlot);

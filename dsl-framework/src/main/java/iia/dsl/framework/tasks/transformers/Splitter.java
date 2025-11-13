@@ -18,7 +18,7 @@ import iia.dsl.framework.util.Storage;
 public class Splitter extends Task {
     private final String itemXPath;
 
-    public Splitter(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
+    Splitter(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
         super(id, TaskType.TRANSFORMER);
         this.itemXPath = itemXPath;
         this.addInputSlot(inputSlot);

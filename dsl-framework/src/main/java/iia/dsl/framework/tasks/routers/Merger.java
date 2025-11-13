@@ -24,7 +24,7 @@ public class Merger extends Task {
      * @param inputSlots Lista de slots de entrada a fusionar
      * @param outputSlot Slot de salida donde se escribirán todos los mensajes
      */
-    public Merger(String id, List<Slot> inputSlots, Slot outputSlot) {
+    Merger(String id, List<Slot> inputSlots, Slot outputSlot) {
         super(id, TaskType.ROUTER);
         
         // Añadir todos los input slots

@@ -28,7 +28,7 @@ public class Aggregator extends Task {
 
     private final Map<String, Message[]> messages;
 
-    public Aggregator(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
+    Aggregator(String id, Slot inputSlot, Slot outputSlot, String itemXPath) {
         super(id, TaskType.TRANSFORMER);
         
         addInputSlot(inputSlot);
