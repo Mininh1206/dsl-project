@@ -9,15 +9,20 @@ import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
-
 public class ContextEnricher extends Task {
-    
+
     ContextEnricher(String id, Slot input, Slot context, Slot output) {
         super(id, TaskType.MODIFIER);
-        
-        if (input != null) addInputSlot(input);
-        if (context != null) addInputSlot(context);
-        if (output != null) addOutputSlot(output);
+
+        if (input != null) {
+            addInputSlot(input);
+        }
+        if (context != null) {
+            addInputSlot(context);
+        }
+        if (output != null) {
+            addOutputSlot(output);
+        }
     }
 
     @Override
@@ -25,15 +30,23 @@ public class ContextEnricher extends Task {
         var in = inputSlots.get(0);
         var context = inputSlots.get(1);
 
-        if (!in.hasMessage() || !context.hasMessage()) {
-            throw new Exception("No hay Mensaje en el slot de entrada para ContextEnricher");
+        if (!in.hasMessage()) {
+            throw new Exception("No hay mensaje en el slot de entrada para ContextEnricher");
+        }
+        
+        if (!context.hasMessage()) {
+            throw new Exception("No hay mensaje en el slot de contexto para ContextEnricher");
         }
 
         var m = in.getMessage();
         var contextMessage = context.getMessage();
 
-        if (!m.hasDocument() || !contextMessage.hasDocument()) {
+        if (!m.hasDocument()) {
             throw new Exception("No hay Documento en el slot de entrada para ContextEnricher");
+        }
+
+        if (!contextMessage.hasDocument()) {
+            throw new Exception("No hay Documento en el slot de contexto para ContextEnricher");
         }
 
         // Saca el xpath del cuerpo del mensaje de contexto

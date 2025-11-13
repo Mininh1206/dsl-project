@@ -62,11 +62,8 @@ public class Correlator extends Task {
 
             Message m = in.getMessage();
 
-            if (!m.hasHeader(Message.CORRELATION_ID)) {
-                throw new Exception("El mensaje no contiene los headers necesarios");
-            }
+            String correlationId;
 
-            var correlationId = "";
             if (xPath.isPresent()) {
                 XPathFactory xf = XPathFactory.newInstance();
                 var x = xf.newXPath();
