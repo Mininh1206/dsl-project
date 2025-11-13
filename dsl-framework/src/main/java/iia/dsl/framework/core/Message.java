@@ -2,7 +2,6 @@ package iia.dsl.framework.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.w3c.dom.Document;
 /**
@@ -29,7 +28,7 @@ public class Message extends Element {
     }
     
     public Message(Document doc) {
-        super(generateId());
+        super();
         this.document = doc;
         this.headers = new HashMap<>();
     }
@@ -74,9 +73,5 @@ public class Message extends Element {
 
     public boolean hasDocument() {
         return document != null;
-    }
-
-    private static String generateId() {
-        return "msg-" + UUID.randomUUID().toString();
     }
 }

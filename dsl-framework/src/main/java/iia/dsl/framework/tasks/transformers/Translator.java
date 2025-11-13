@@ -52,6 +52,6 @@ public class Translator extends Task {
         
         transformer.transform(source, result);
         
-        outputSlots.get(0).setMessage(new Message(in.getMessageId(), (Document) result.getNode()));
+        outputSlots.get(0).setMessage(new Message(m.getId(), (Document) result.getNode(), m.getHeaders()));
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.tasks.Task;
 
-public class Flow extends Element {
+public class Flow extends ExecutableElement {
     private final List<ExecutableElement> elements;
     
     public Flow() {
@@ -27,6 +27,7 @@ public class Flow extends Element {
         }
     }
     
+    @Override
     public void execute() {
         try {
             System.out.println("Ejecutando Flow: " + id);

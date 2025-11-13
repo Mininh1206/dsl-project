@@ -24,37 +24,34 @@ import iia.dsl.framework.tasks.TaskType;
  * y los saca al mismo tiempo por sus múltiples salidas.
  */
 public class Correlator extends Task {
-
-    private final List<Slot> inputSlot;
-    private final List<Slot> outputSlot;
     private final Map<String, Message[]> messages;
     private final Optional<String> xPath;
 
-    Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot) {
+    Correlator(String id, List<Slot> inputSlots, List<Slot> outputSlots) {
         super(id, TaskType.ROUTER);
-        this.inputSlot = inputSlot;
-        this.outputSlot = outputSlot;
+        this.inputSlots.addAll(inputSlots);
+        this.outputSlots.addAll(outputSlots);
         this.messages = new HashMap<>();
         this.xPath = Optional.empty();
     }
 
-    Correlator(String id, List<Slot> inputSlot, List<Slot> outputSlot, String xPath) {
+    Correlator(String id, List<Slot> inputSlots, List<Slot> outputSlots, String xPath) {
         super(id, TaskType.ROUTER);
-        this.inputSlot = inputSlot;
-        this.outputSlot = outputSlot;
+        this.inputSlots.addAll(inputSlots);
+        this.outputSlots.addAll(outputSlots);
         this.messages = new HashMap<>();
         this.xPath = Optional.of(xPath);
     }
 
     @Override
     public void execute() throws Exception {
-        if (inputSlot.size() < 2 || inputSlot.size() != outputSlot.size()) {
+        if (inputSlots.size() < 2 || inputSlots.size() != outputSlots.size()) {
             throw new Exception("Los slots no son correctos");
         }
 
-        for (int i = 0; i < inputSlot.size(); i++) {
+        for (int i = 0; i < inputSlots.size(); i++) {
 
-            var in = inputSlot.get(i);
+            var in = inputSlots.get(i);
 
             if (!in.hasMessage()) {
                 continue;
@@ -81,9 +78,11 @@ public class Correlator extends Task {
             } else {
                 correlationId = m.getHeader(Message.CORRELATION_ID);
             }
+
             if (!messages.containsKey(correlationId)) {
-                messages.put(correlationId, new Message[outputSlot.size()]);
+                messages.put(correlationId, new Message[outputSlots.size()]);
             }
+            
             messages.get(correlationId)[i] = m;
 
             boolean allReceived = true;
@@ -95,8 +94,8 @@ public class Correlator extends Task {
             }
 
             if(allReceived){
-                for (int j = 0; j < outputSlot.size(); j++) {
-                    outputSlot.get(j).setMessage(new Message(messages.get(correlationId)[j]));
+                for (int j = 0; j < outputSlots.size(); j++) {
+                    outputSlots.get(j).setMessage(new Message(messages.get(correlationId)[j]));
                 }
                 messages.remove(correlationId);
             }

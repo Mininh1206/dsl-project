@@ -28,10 +28,18 @@ public class Splitter extends Task {
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
-        var d = in.getDocument();
-        if (d == null) {
+
+        if (!in.hasMessage()) {
+            return;
+        }
+        
+        var m = in.getMessage();
+
+        if (!m.hasDocument()) {
             throw new Exception("No hay ningun documento para leer");
         }
+
+        var d = m.getDocument();
 
         var xf = XPathFactory.newInstance();
         var x = xf.newXPath();
@@ -58,7 +66,7 @@ public class Splitter extends Task {
                     Node importedNode = dr.importNode(node, true);
                     dr.appendChild(importedNode);
 
-                    Message msg = new Message(in.getMessageId(), dr);
+                    Message msg = new Message(m.getId(), dr, m.getHeaders());
                     msg.addHeader(Message.NUM_FRAG, "" + i);
                     msg.addHeader(Message.TOTAL_FRAG, "" + totalNodes);
                     outputSlots.get(0).setMessage(msg);
@@ -66,7 +74,7 @@ public class Splitter extends Task {
             }
         }
 
-        Storage.getInstance().storeDocument(in.getMessageId(), d);
+        Storage.getInstance().storeDocument(m.getId(), d);
 
     }
 }

@@ -55,7 +55,7 @@ public class Distributor extends Task {
             var result = (Boolean) ce.evaluate(d, javax.xml.xpath.XPathConstants.BOOLEAN);
 
             if (result != null && result) {
-                outputSlots.get(i).setMessage(new Message(in.getMessageId(), d));
+                outputSlots.get(i).setMessage(new Message(m.getId(), d, m.getHeaders()));
             }
         }
     }

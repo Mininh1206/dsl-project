@@ -38,33 +38,10 @@ public class Slot extends Element {
         return messages.size();
     }
     
-    // --- MÉTODOS DE RETROCOMPATIBILIDAD PARA DOCUMENT ---
-    
-    /**
-     * Obtiene el documento del mensaje actual.
-     */
-    public Document getDocument() {
-        return messages.peek() != null ? messages.peek().getDocument() : null;
-    }
-    
-    /**
-     * Obtiene el ID del mensaje actual.
-     */
-    public String getMessageId() {
-        return messages.peek() != null ? messages.peek().getId() : null;
-    }
-    
     /**
      * Verifica si el slot tiene un mensaje.
      */
     public boolean hasMessage() {
         return !messages.isEmpty();
-    }
-    
-    /**
-     * Limpia el mensaje del slot.
-     */
-    public void clear() {
-        messages.clear();
     }
 }
