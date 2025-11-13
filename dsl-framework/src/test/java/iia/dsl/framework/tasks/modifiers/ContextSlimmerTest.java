@@ -28,7 +28,9 @@ public class ContextSlimmerTest {
         // Crear mensaje de contexto con xpath para eliminar el nodo <date>
         String contextXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <xpath>/order/header/date</xpath>
+                <context>
+                    <xpath>/order/header/date</xpath>
+                </context>
                 """;
         Document contextDoc = TestUtils.createXMLDocument(contextXml);
         
@@ -66,7 +68,9 @@ public class ContextSlimmerTest {
         // Crear mensaje de contexto con xpath para eliminar todo el nodo <items>
         String contextXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <xpath>/order/items</xpath>
+                <context>
+                    <xpath>/order/items</xpath>
+                </context>
                 """;
         Document contextDoc = TestUtils.createXMLDocument(contextXml);
         
@@ -105,7 +109,9 @@ public class ContextSlimmerTest {
         // Solo establecer el contexto, no el input
         String contextXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <xpath>/order/header/date</xpath>
+                <context>
+                    <xpath>/order/header/date</xpath>
+                </context>
                 """;
         context.setMessage(new Message("ctx-3", TestUtils.createXMLDocument(contextXml)));
         
@@ -144,7 +150,9 @@ public class ContextSlimmerTest {
         // Contexto sin el nodo /xpath (usando otro nombre de nodo raíz)
         String contextXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <wrongNode>/order/header/date</wrongNode>
+                <context>
+                    <wrongNode>/order/header/date</wrongNode>
+                </context>
                 """;
         Document contextDoc = TestUtils.createXMLDocument(contextXml);
         
@@ -172,7 +180,9 @@ public class ContextSlimmerTest {
         // XPath que no existe en el documento principal
         String contextXml = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <xpath>/order/nonExistentNode</xpath>
+                <context>
+                    <xpath>/order/nonExistentNode</xpath>
+                </context>
                 """;
         Document contextDoc = TestUtils.createXMLDocument(contextXml);
         
