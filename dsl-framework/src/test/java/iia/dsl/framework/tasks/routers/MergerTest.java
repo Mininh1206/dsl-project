@@ -105,7 +105,7 @@ public class MergerTest {
         Document result = output.getDocument();
         assertNotNull(result, "Output should contain the document from input1");
         
-        String data = result.getElementsByTagName("data").item(0).getTextContent();
+        String data = result.getElementsByTagName("data").item(0).getNodeValue();
         assertEquals("Valid data", data);
     }
     

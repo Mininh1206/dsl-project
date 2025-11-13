@@ -13,9 +13,13 @@ public class OutputPort extends Port {
     
     @Override
     public void execute() throws Exception {
-        // Lógica de salida: tomar documento del slot y enviarlo mediante el connector
-        if (inputSlot.getDocument() != null) {
-            connector.call(inputSlot.getDocument());
+        if (!inputSlot.hasMessage())
+            return;
+
+        var m = inputSlot.getMessage();
+
+        if (m.hasDocument()) {
+            connector.call(m.getDocument());
             System.out.println("OutputPort '" + id + "' envió documento desde slot '" + inputSlot.getId() + "'");
         } else {
             System.out.println("OutputPort '" + id + "' no encontró documento en slot '" + inputSlot.getId() + "'");

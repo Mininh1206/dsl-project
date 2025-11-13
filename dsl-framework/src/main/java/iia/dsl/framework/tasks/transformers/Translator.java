@@ -30,11 +30,18 @@ public class Translator extends Task {
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
-        var d = in.getDocument();
-        
-        if (d == null) {
-            throw new Exception("No hay ningún documento para transformar");
+
+        if (!in.hasMessage()) {
+            return;
         }
+        
+        var m = in.getMessage();
+        
+        if (!m.hasDocument()) {
+            throw new Exception("No hay Documento en el slot de entrada para Translator '" + id + "'");
+        }
+
+        var d = m.getDocument();
         
         TransformerFactory factory = TransformerFactory.newInstance();
         StreamSource xsltSource = new StreamSource(new StringReader(xslt));

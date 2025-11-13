@@ -30,12 +30,8 @@ public class ContextEnricher extends Task {
         var in = inputSlots.get(0);
         var context = inputSlots.get(1);
 
-        if (!in.hasMessage()) {
-            throw new Exception("No hay mensaje en el slot de entrada para ContextEnricher");
-        }
-        
-        if (!context.hasMessage()) {
-            throw new Exception("No hay mensaje en el slot de contexto para ContextEnricher");
+        if (!in.hasMessage() || !context.hasMessage()) {
+            return;
         }
 
         var m = in.getMessage();
@@ -67,7 +63,7 @@ public class ContextEnricher extends Task {
         }
 
         // Saca el nodo a enriquecer usando el xpath del mensaje de contexto
-        xpath = contextNode.getTextContent();
+        xpath = contextNode.getNodeValue();
         xpathExpr = xpathFactory.newXPath().compile(xpath);
         var enrichNode = (Node) xpathExpr.evaluate(m.getDocument(), XPathConstants.NODE);
         if (enrichNode == null) {
@@ -78,7 +74,7 @@ public class ContextEnricher extends Task {
         // Importar el nodo del contexto al documento del mensaje antes de agregarlo
         Node importedBody = m.getDocument().importNode(bodyNode, true);
         enrichNode.appendChild(importedBody);
-        m.setDocument(m.getDocument());
+
         outputSlots.get(0).setMessage(m);
     }
 }

@@ -2,8 +2,6 @@ package iia.dsl.framework.tasks.routers;
 
 import java.util.List;
 
-import org.w3c.dom.Document;
-
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
@@ -25,15 +23,19 @@ public class Replicator extends Task {
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
-        Document d = in.getDocument();
-        
-        if (d == null) {
+
+        if (!in.hasMessage()) {
+            return;
+        }
+
+        var m = in.getMessage();
+
+        if (!m.hasDocument()) {
             throw new Exception("Replicator '" + id + "' no tiene documento para duplicar.");
         }
 
-       
         for (Slot outputSlot : outputSlots) {
-            outputSlot.setMessage(new Message(in.getMessageId(), (Document) d.cloneNode(true)));
+            outputSlot.setMessage(new Message(m));
         }
     }
 }

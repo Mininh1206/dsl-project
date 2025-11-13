@@ -26,11 +26,18 @@ public class Slimmer extends Task {
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
-        var d = in.getDocument();
+
+        if (!in.hasMessage()) {
+            return;
+        }
+
+        var m = in.getMessage();
         
-        if (d == null) {
+        if (!m.hasDocument()) {
             throw new Exception("No hay ningun documento para leer");
         }
+
+        var d = m.getDocument();
         
         var xf = XPathFactory.newInstance();
         var x = xf.newXPath();
@@ -46,7 +53,7 @@ public class Slimmer extends Task {
             if (nodeToRemove != null && nodeToRemove instanceof Node) {
                 ((Node)nodeToRemove).getParentNode().removeChild((Node)nodeToRemove);
                 
-                outputSlots.get(0).setMessage(new Message(in.getMessageId(), dr));
+                outputSlots.get(0).setMessage(new Message(m.getId(), dr, m.getHeaders()));
             }
         }
     }

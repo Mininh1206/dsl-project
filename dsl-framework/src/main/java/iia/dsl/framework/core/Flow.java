@@ -9,6 +9,11 @@ import iia.dsl.framework.tasks.Task;
 public class Flow extends Element {
     private final List<ExecutableElement> elements;
     
+    public Flow() {
+        super();
+        this.elements = new ArrayList<>();
+    }
+
     public Flow(String id) {
         super(id);
         this.elements = new ArrayList<>();
@@ -20,8 +25,6 @@ public class Flow extends Element {
         } else {
             throw new IllegalArgumentException("Element must be a Port or Task");
         }
-
-        elements.add(element);
     }
     
     public void execute() {

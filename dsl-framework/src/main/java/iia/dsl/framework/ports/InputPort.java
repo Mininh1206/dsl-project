@@ -9,6 +9,11 @@ import iia.dsl.framework.core.Slot;
 public class InputPort extends Port {
     private final Slot outputSlot;
 
+    public InputPort(Connector connector, Slot outputSlot) {
+        super(connector);
+        this.outputSlot = outputSlot;
+    }
+
     public InputPort(String id, Connector connector, Slot outputSlot) {
         super(id, connector);
         this.outputSlot = outputSlot;

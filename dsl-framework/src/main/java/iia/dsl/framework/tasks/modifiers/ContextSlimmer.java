@@ -24,7 +24,7 @@ public class ContextSlimmer extends Task {
         var context = inputSlots.get(1);
         
         if (!in.hasMessage() || !context.hasMessage()) {
-            throw new Exception("No hay Mensaje en el slot de entrada para ContextSlimmer");
+            return;
         }
         
         var m = in.getMessage();
@@ -44,7 +44,7 @@ public class ContextSlimmer extends Task {
         }
 
         // Saca el nodo a eliminar usando el xpath del mensaje de contexto
-        xpath = contextNode.getTextContent();
+        xpath = contextNode.getNodeValue();
         xpathExpr = xpathFactory.newXPath().compile(xpath);
         var removeNode = (Node) xpathExpr.evaluate(m.getDocument(), XPathConstants.NODE);
         if (removeNode == null) {

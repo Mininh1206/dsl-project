@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Node;
-
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
@@ -30,13 +28,23 @@ public class Distributor extends Task {
 
     @Override
     public void execute() throws Exception {
-
         if (xPath.size() != outputSlots.size()) {
             throw new Exception("Los slots no son correctos");
         }
 
         var in = inputSlots.get(0);
-        var d = in.getDocument();
+
+        if (!in.hasMessage()) {
+            return;
+        }
+
+        var m = in.getMessage();
+        
+        if (!m.hasDocument()) {
+            throw new Exception("No hay Documento en el slot de entrada para Distributor '" + id + "'");
+        }
+
+        var d = m.getDocument();
 
         var xf = XPathFactory.newInstance();
         var x = xf.newXPath();
@@ -46,7 +54,7 @@ public class Distributor extends Task {
             var ce = x.compile(xPath.get(i));
             var result = (Boolean) ce.evaluate(d, javax.xml.xpath.XPathConstants.BOOLEAN);
 
-            if (result != null) {
+            if (result != null && result) {
                 outputSlots.get(i).setMessage(new Message(in.getMessageId(), d));
             }
         }

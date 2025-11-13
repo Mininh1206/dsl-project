@@ -60,7 +60,11 @@ public class Correlator extends Task {
                 continue;
             }
 
-            Message m = in.getMessage();
+            var m = in.getMessage();
+            
+            if (!m.hasDocument()) {
+                throw new Exception("No hay Documento en el slot de entrada para Correlator '" + id + "'");
+            }
 
             String correlationId;
 
@@ -72,7 +76,7 @@ public class Correlator extends Task {
 
                 var correlationIdNode = (Node) path.evaluate(m.getDocument(), XPathConstants.NODE);
 
-                correlationId = correlationIdNode.getTextContent();
+                correlationId = correlationIdNode.getFirstChild().getNodeValue();
 
             } else {
                 correlationId = m.getHeader(Message.CORRELATION_ID);
@@ -92,7 +96,7 @@ public class Correlator extends Task {
 
             if(allReceived){
                 for (int j = 0; j < outputSlot.size(); j++) {
-                    outputSlot.get(j).setMessage(messages.get(correlationId)[j]);
+                    outputSlot.get(j).setMessage(new Message(messages.get(correlationId)[j]));
                 }
                 messages.remove(correlationId);
             }

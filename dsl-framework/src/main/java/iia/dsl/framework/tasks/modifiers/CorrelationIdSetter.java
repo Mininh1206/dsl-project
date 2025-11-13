@@ -33,7 +33,7 @@ public class CorrelationIdSetter extends Task {
       var outSlot = outputSlots.get(0);
 
       if (!inSlot.hasMessage())
-         throw new Exception("No hay mensaje en el slot de entrada para CorrelationIdSetter '" + id + "'");
+         return;
 
       // Intentar compatibilidad con uso por documentos individuales
       var msg = inSlot.getMessage();

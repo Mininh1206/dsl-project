@@ -55,6 +55,8 @@ public class Merger extends Task {
 
                 if (msg.hasDocument()) {
                     outputSlot.setMessage(msg);
+                } else {
+                    throw new Exception("No hay Documento en el slot de entrada para Merger '" + id + "'");
                 }
             }
         }

@@ -67,7 +67,7 @@ public class ContextEnricherTest {
             var children = item.getChildNodes();
             for (int j = 0; j < children.getLength(); j++) {
                 if ("name".equals(children.item(j).getNodeName()) && 
-                    "Keyboard".equals(children.item(j).getTextContent())) {
+                    "Keyboard".equals(children.item(j).getNodeValue())) {
                     keyboardFound = true;
                     break;
                 }

@@ -15,7 +15,7 @@ import iia.dsl.framework.util.TestUtils;
 public class FilterTest {
     
     @Test
-    public void testFilterAcceptedDocument() throws XPathExpressionException {
+    public void testFilterAcceptedDocument() throws Exception {
         // Arrange
         String xml = TestUtils.SAMPLE_XML;
         Document doc = TestUtils.createXMLDocument(xml);
@@ -37,7 +37,7 @@ public class FilterTest {
     }
     
     @Test
-    public void testFilterPassedDocument() throws XPathExpressionException {
+    public void testFilterPassedDocument() throws Exception {
         // Arrange
         String xml = TestUtils.SAMPLE_XML;
         Document doc = TestUtils.createXMLDocument(xml);
