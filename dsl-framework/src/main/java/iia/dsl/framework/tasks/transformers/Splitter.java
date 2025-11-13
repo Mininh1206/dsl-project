@@ -48,7 +48,11 @@ public class Splitter extends Task {
             for (int i = 0; i < totalNodes; i++) {
                 Node node = nodes.item(i);
                 if (node != null) {
-                    d.removeChild(node);
+                    // Eliminar el nodo de su padre real, no del documento
+                    Node parent = node.getParentNode();
+                    if (parent != null) {
+                        parent.removeChild(node);
+                    }
 
                     Document dr = builder.newDocument();
                     Node importedNode = dr.importNode(node, true);
