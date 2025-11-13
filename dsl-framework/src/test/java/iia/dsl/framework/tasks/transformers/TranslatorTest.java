@@ -1,7 +1,6 @@
 package iia.dsl.framework.tasks.transformers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -44,8 +43,8 @@ public class TranslatorTest {
         translator.execute();
         
         // Assert
-        Document result = outputSlot.getDocument();
-        assertNotNull(result, "Output document should not be null");
+        Document result = outputSlot.getMessage().getDocument();
+        assertTrue(outputSlot.hasMessage(), "Output document should not be null");
         
         assertEquals("summary", result.getDocumentElement().getNodeName(), 
                 "Root element should be 'summary'");
@@ -120,8 +119,8 @@ public class TranslatorTest {
         translator.execute();
         
         // Assert
-        Document result = outputSlot.getDocument();
-        assertNotNull(result);
+        Document result = outputSlot.getMessage().getDocument();
+        assertTrue(outputSlot.hasMessage(), "Output document should not be null");
         assertEquals("order", result.getDocumentElement().getNodeName());
     }
 }

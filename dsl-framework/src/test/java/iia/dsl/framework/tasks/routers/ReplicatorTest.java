@@ -8,9 +8,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,9 +75,9 @@ class ReplicatorTest {
         
         replicator.execute();
         
-        assertNotNull(outputSlot1.getDocument());
-        assertNotNull(outputSlot2.getDocument());
-        assertNotNull(outputSlot3.getDocument());
+        assertTrue(outputSlot1.hasMessage());
+        assertTrue(outputSlot2.hasMessage());
+        assertTrue(outputSlot3.hasMessage());
     }
     
     @Test
@@ -91,8 +91,8 @@ class ReplicatorTest {
         
         replicator.execute();
         
-        Document doc1 = outputSlot1.getDocument();
-        Document doc2 = outputSlot2.getDocument();
+        Document doc1 = outputSlot1.getMessage().getDocument();
+        Document doc2 = outputSlot2.getMessage().getDocument();
         
         assertNotNull(doc1);
         assertNotNull(doc2);
@@ -126,8 +126,8 @@ class ReplicatorTest {
         
         replicator.execute();
         
-        assertNotNull(outputSlot1.getDocument());
-        assertNull(outputSlot2.getDocument());
+        assertTrue(outputSlot1.hasMessage());
+        assertFalse(outputSlot2.hasMessage());
     }
     
     @Test
@@ -141,8 +141,7 @@ class ReplicatorTest {
         
         replicator.execute();
         
-        Document replicatedDoc = outputSlot1.getDocument();
-        assertNotNull(replicatedDoc);
-        assertEquals("order", replicatedDoc.getDocumentElement().getNodeName());
+        assertTrue(outputSlot1.hasMessage());
+        assertEquals("order", outputSlot1.getMessage().getDocument().getDocumentElement().getNodeName());
     }
 }

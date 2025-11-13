@@ -2,9 +2,9 @@ package iia.dsl.framework.tasks.routers;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -33,7 +33,7 @@ public class FilterTest {
         filter.execute();
         
         // Assert
-        assertNull(outputSlot.getDocument(), "Document should be filtered out as it has only 2 items");
+        assertFalse(outputSlot.hasMessage(), "Document should be filtered out as it has only 2 items");
     }
     
     @Test
@@ -55,7 +55,7 @@ public class FilterTest {
         filter.execute();
         
         // Assert
-        assertNotNull(outputSlot.getDocument(), "Document should pass filter as it has items");
+        assertTrue(outputSlot.hasMessage(), "Document should pass filter as it has items");
     }
     
     @Test

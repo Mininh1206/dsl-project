@@ -3,8 +3,8 @@ package iia.dsl.framework.tasks.routers;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -67,8 +67,7 @@ public class MergerTest {
         // Act
         merger.execute();
         
-        Document result = output.getDocument();
-        assertNotNull(result, "Output document should not be null");
+        assertTrue(output.hasMessage(), "Output document should not be null");
 
         assertEquals(3, output.getMessageCount(), "Output should contain the three merged messages");
     }
@@ -101,11 +100,9 @@ public class MergerTest {
         // Act
         merger.execute();
         
-        // Assert
-        Document result = output.getDocument();
-        assertNotNull(result, "Output should contain the document from input1");
+        assertTrue(output.hasMessage(), "Output should contain the document from input1");
         
-        String data = result.getElementsByTagName("data").item(0).getNodeValue();
+        String data = output.getMessage().getDocument().getElementsByTagName("data").item(0).getNodeValue();
         assertEquals("Valid data", data);
     }
     
@@ -126,9 +123,7 @@ public class MergerTest {
         merger.execute();
         
         // Assert
-        // El output debería permanecer vacío
-        Document result = output.getDocument();
-        assertNull(result, "Output should be null when all inputs are empty");
+        assertFalse(output.hasMessage(), "Output should be null when all inputs are empty");
     }
     
     @Test
@@ -149,9 +144,8 @@ public class MergerTest {
         merger.execute();
         
         // Assert
-        Document result = output.getDocument();
-        assertNotNull(result, "Output should contain the document");
-        assertEquals("order", result.getDocumentElement().getNodeName());
+        assertTrue(output.hasMessage(), "Output should contain the document");
+        assertEquals("order", output.getMessage().getDocument().getDocumentElement().getNodeName());
     }
     
     @Test
@@ -205,10 +199,9 @@ public class MergerTest {
         merger.execute();
         
         // Assert
-        Document result = output.getDocument();
-        assertNotNull(result, "Output should contain merged document");
+        assertTrue(output.hasMessage(), "Output should contain merged document");
         
         // Verificar que es un documento de pedido válido
-        assertEquals("order", result.getDocumentElement().getNodeName());
+        assertEquals("order", output.getMessage().getDocument().getDocumentElement().getNodeName());
     }
 }

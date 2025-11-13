@@ -3,8 +3,6 @@ package iia.dsl.framework.core;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.w3c.dom.Document;
-
 public class Slot extends Element {
     private final Queue<Message> messages;
     
