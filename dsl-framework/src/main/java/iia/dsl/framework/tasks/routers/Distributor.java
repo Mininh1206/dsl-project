@@ -31,7 +31,7 @@ public class Distributor extends Task {
             throw new Exception("Los slots no son correctos");
         }
 
-        var in = inputSlots.get(0);
+        var in = inputSlot;
         var d = in.getDocument();
 
         var xf = XPathFactory.newInstance();
@@ -43,7 +43,7 @@ public class Distributor extends Task {
             var result = ce.evaluate(d, javax.xml.xpath.XPathConstants.NUMBER);
 
             if (result instanceof Number && ((Number) result).doubleValue() == 1.0) {
-                outputSlots.get(i).setMessage(new Message(in.getMessageId(), d));
+                outputSlot.get(i).setMessage(new Message(in.getMessageId(), d));
             }
         }
     }
