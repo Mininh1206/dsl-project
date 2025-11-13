@@ -3,11 +3,17 @@ package iia.dsl.framework.ports;
 import org.w3c.dom.Document;
 
 import iia.dsl.framework.connectors.Connector;
+import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 
 public class RequestPort extends Port {
-    public RequestPort(String id, Connector connector, Slot slot) {
-        super(id, connector, slot);
+    private final Slot inputSlot;
+    private final Slot outputSlot;
+
+    public RequestPort(String id, Connector connector, Slot inputSlot, Slot outputSlot) {
+        super(id, connector);
+        this.inputSlot = inputSlot;
+        this.outputSlot = outputSlot;
     }
     
     public Document call(Document request) {
@@ -16,6 +22,11 @@ public class RequestPort extends Port {
     
     @Override
     public void execute() {
-        // Default: no-op
+        if (!inputSlot.hasMessage())
+            throw new RuntimeException("No hay mensaje en el slot de entrada para RequestPort '" + id + "'");
+
+        Document requestDoc = inputSlot.getMessage().getDocument();
+        Document responseDoc = call(requestDoc);
+        outputSlot.setMessage(new Message(responseDoc));
     }
 }

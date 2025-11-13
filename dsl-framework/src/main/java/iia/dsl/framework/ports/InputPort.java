@@ -7,8 +7,11 @@ import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 
 public class InputPort extends Port {
-    public InputPort(String id, Connector connector, Slot slot) {
-        super(id, connector, slot);
+    private final Slot outputSlot;
+
+    public InputPort(String id, Connector connector, Slot outputSlot) {
+        super(id, connector);
+        this.outputSlot = outputSlot;
     }
     
     @Override
@@ -17,8 +20,8 @@ public class InputPort extends Port {
         Document doc = connector.call(null);
         
         // 2. Coloca el documento en el slot para que las tasks lo procesen
-        slot.setMessage(new Message(doc));
+        outputSlot.setMessage(new Message(doc));
         
-        System.out.println("InputPort '" + id + "' cargó documento en slot '" + slot.getId() + "'");
+        System.out.println("InputPort '" + id + "' cargó documento en slot '" + outputSlot.getId() + "'");
     }
 }
