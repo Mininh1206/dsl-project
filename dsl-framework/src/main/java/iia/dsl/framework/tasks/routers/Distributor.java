@@ -34,28 +34,26 @@ public class Distributor extends Task {
 
         var in = inputSlots.get(0);
 
-        if (!in.hasMessage()) {
-            return;
-        }
-
-        var m = in.getMessage();
+        while (in.hasMessage()) {
+            var m = in.getMessage();
         
-        if (!m.hasDocument()) {
-            throw new Exception("No hay Documento en el slot de entrada para Distributor '" + id + "'");
-        }
+            if (!m.hasDocument()) {
+                throw new Exception("No hay Documento en el slot de entrada para Distributor '" + id + "'");
+            }
 
-        var d = m.getDocument();
+            var d = m.getDocument();
 
-        var xf = XPathFactory.newInstance();
-        var x = xf.newXPath();
+            var xf = XPathFactory.newInstance();
+            var x = xf.newXPath();
 
-        for (int i = 0; i < xPath.size(); i++) {
+            for (int i = 0; i < xPath.size(); i++) {
 
-            var ce = x.compile(xPath.get(i));
-            var result = (Boolean) ce.evaluate(d, javax.xml.xpath.XPathConstants.BOOLEAN);
+                var ce = x.compile(xPath.get(i));
+                var result = (Boolean) ce.evaluate(d, javax.xml.xpath.XPathConstants.BOOLEAN);
 
-            if (result != null && result) {
-                outputSlots.get(i).setMessage(new Message(m.getId(), d, m.getHeaders()));
+                if (result != null && result) {
+                    outputSlots.get(i).setMessage(new Message(m.getId(), d, m.getHeaders()));
+                }
             }
         }
     }

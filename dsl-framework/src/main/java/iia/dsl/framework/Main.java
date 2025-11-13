@@ -1,13 +1,8 @@
 package iia.dsl.framework;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 
@@ -20,12 +15,13 @@ import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.tasks.modifiers.ModifierFactory;
 import iia.dsl.framework.tasks.routers.RouterFactory;
+import static iia.dsl.framework.util.DocumentUtil.createXMLDocument;
 
 public class Main {
 
     // XML de entrada: pedido de productos de cafe y coca-cola
     private static final String ORDER_1 = """
-                                   <cafe_order>
+            <cafe_order>
             <order_id>1</order_id>
             <drinks>
             <drink>
@@ -41,22 +37,37 @@ public class Main {
                                     """;
 
     private static final String ORDER_COLD = """
-            <drinks>
             <drink>
             <name>coca-cola</name>
             <state>ready</state>
             </drink>
-            </drinks>
                                     """;
 
     private static final String ORDER_HOT = """
-            <drinks>
             <drink>
             <name>cafe</name>
             <state>ready</state>
             </drink>
-            </drinks>
-                                                """;
+                                    """;
+
+    private static final String ORDER_CONTEXT_XSLT = """
+            <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                
+                <xsl:output method="xml" indent="yes"/>
+                <xsl:strip-space elements="*"/>
+
+                <xsl:template match="/drink">
+                    <context>
+                        <xpath>/drink</xpath>
+                        
+                        <body>
+                            <xsl:copy-of select="state"/>
+                        </body>
+                    </context>
+                </xsl:template>
+
+            </xsl:stylesheet>
+                                    """;
 
     private static final String ORDER_XSLT = """
             <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -95,12 +106,14 @@ public class Main {
             // === CONFIGURACIÓN INICIAL ===
 
             System.out.println(ORDER_1);
-            Document orderDoc = createDocument(ORDER_1);
+            Document orderDoc = createXMLDocument(ORDER_1);
 
             // === PASO 1: Configurar Slots ===
             var inputSlotSystem = new Slot();
-
+            
             var outputSlotSplitter = new Slot();
+            
+            var outputSlotCorrelationIdSetter = new Slot();
 
             var outputSlotDistributorToFrias = new Slot();
             var outputSlotDistributorToCalientes = new Slot();
@@ -131,14 +144,14 @@ public class Main {
 
             // === PASO 2: Configurar Connectors ===
             var mockConnectorInput = new MockConnector(orderDoc);
-            var mockConnectorFrias = new MockConnector(createDocument(ORDER_COLD));
-            var mockConnectorCalientes = new MockConnector(createDocument(ORDER_HOT));
+            var mockConnectorFrias = new MockConnector(createXMLDocument(ORDER_COLD));
+            var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
             var fileConnectorOutput = new FileConnector("comanda.xml");
 
             // === PASO 3: Configurar Ports ===
             var inputPort = new InputPort(mockConnectorInput, inputSlotSystem);
-            var requestPortFrias = new RequestPort("requestPortFrias", mockConnectorFrias, inputSlotRequestPortFrias, outputSlotRequestPortFrias);
-            var requestPortCalientes = new RequestPort("requestPortCalientes", mockConnectorCalientes, inputSlotRequestPortCalientes, outputSlotRequestPortCalientes);
+            var requestPortFrias = new RequestPort("requestPortFrias", mockConnectorFrias, inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
+            var requestPortCalientes = new RequestPort("requestPortCalientes", mockConnectorCalientes, inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
             var outputPort = new OutputPort("outputPort", fileConnectorOutput, outputSlotSystem);
 
             // === PASO 5: Configurar Tasks Factories ===
@@ -149,7 +162,9 @@ public class Main {
             // === PASO 6: Configurar Tasks ===
             var splitter = transformerFactory.createSplitterTask("splitter", inputSlotSystem, outputSlotSplitter, "/cafe_order/drinks/drink");
 
-            var distributor = routerFactory.createDistributorTask("distributor", outputSlotSplitter, List.of(outputSlotDistributorToFrias, outputSlotDistributorToCalientes), List.of("/drink/type='cold'", "/drink/type='hot'"));
+            var correlatorIdSetter = modifierFactory.createCorrelationIdSetterTask("correlationIdSetter", outputSlotSplitter, outputSlotCorrelationIdSetter);
+
+            var distributor = routerFactory.createDistributorTask("distributor", outputSlotCorrelationIdSetter, List.of(outputSlotDistributorToFrias, outputSlotDistributorToCalientes), List.of("/drink/type='cold'", "/drink/type='hot'"));
 
             var replicatorFrias = routerFactory.createReplicatorTask("replicatorFrias", outputSlotDistributorToFrias, List.of(outputSlot1Replicator1, outputSlot2Replicator1));
             var replicatorCalientes = routerFactory.createReplicatorTask("replicatorCalientes", outputSlotDistributorToCalientes, List.of(outputSlot1Replicator2, outputSlot2Replicator2));
@@ -157,8 +172,8 @@ public class Main {
             var translatorFrias = transformerFactory.createTranslatorTask("translatorFrias", outputSlot2Replicator1, inputSlotRequestPortFrias, ORDER_XSLT);
             var translatorCalientes = transformerFactory.createTranslatorTask("translatorCalientes", outputSlot2Replicator2, inputSlotRequestPortCalientes, ORDER_XSLT);
 
-            var correlatorFrias = routerFactory.createCorrelatorTask("correlatorFrias", List.of(outputSlot1Replicator1, outputSlotRequestPortFrias), List.of(outputSlot1Correlator1, outputSlot2Correlator1), "//name");
-            var correlatorCalientes = routerFactory.createCorrelatorTask("correlatorCalientes", List.of(outputSlot1Replicator2, outputSlotRequestPortCalientes), List.of(outputSlot1Correlator2, outputSlot2Correlator2), "//name");
+            var correlatorFrias = routerFactory.createCorrelatorTask("correlatorFrias", List.of(outputSlot1Replicator1, outputSlotRequestPortFrias), List.of(outputSlot1Correlator1, outputSlot2Correlator1));
+            var correlatorCalientes = routerFactory.createCorrelatorTask("correlatorCalientes", List.of(outputSlot1Replicator2, outputSlotRequestPortCalientes), List.of(outputSlot1Correlator2, outputSlot2Correlator2));
 
             var contextContentEnricherFrias = modifierFactory.createContextEnricherTask("contextEnricherFrias", outputSlot1Correlator1, outputSlot2Correlator1, outputSlotContextEnricher1);
             var contextContentEnricherCalientes = modifierFactory.createContextEnricherTask("contextEnricherCalientes", outputSlot1Correlator2, outputSlot2Correlator2, outputSlotContextEnricher2);
@@ -172,6 +187,7 @@ public class Main {
 
             flow.addElement(inputPort);
             flow.addElement(splitter);
+            flow.addElement(correlatorIdSetter);
             flow.addElement(distributor);
             flow.addElement(replicatorFrias);
             flow.addElement(replicatorCalientes);
@@ -192,14 +208,5 @@ public class Main {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    // === UTILIDADES ===
-    private static Document createDocument(String xml) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        ByteArrayInputStream input = new ByteArrayInputStream(
-                xml.getBytes(StandardCharsets.UTF_8));
-        return builder.parse(input);
     }
 }

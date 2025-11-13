@@ -5,14 +5,24 @@
 package iia.dsl.framework.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -35,17 +45,34 @@ public class DocumentUtil {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            
+
             ByteArrayInputStream input = new ByteArrayInputStream(
-                xmlContent.getBytes(StandardCharsets.UTF_8)
+                    xmlContent.getBytes(StandardCharsets.UTF_8)
             );
-            
+
             return builder.parse(input);
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException("Error creating XML document", e);
         }
     }
-    
+
+    public static Document applyXslt(Document doc, String xslt) {
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            StreamSource xsltSource = new StreamSource(new StringReader(xslt));
+            Transformer transformer = factory.newTransformer(xsltSource);
+
+            DOMSource source = new DOMSource(doc);
+            DOMResult result = new DOMResult();
+
+            transformer.transform(source, result);
+
+            return (Document) result.getNode();
+        } catch (TransformerException e) {
+            throw new RuntimeException("Error applying XSLT transformation", e);
+        }
+    }
+
     private static String getTree(NodeList childs, int profundidad) {
         StringBuilder sb = new StringBuilder();
 

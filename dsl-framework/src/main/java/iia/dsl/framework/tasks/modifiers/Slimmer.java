@@ -12,6 +12,7 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 public class Slimmer extends Task {
+
     private final String xpath;
 
     Slimmer(String id, Slot inputSlot, Slot outputSlot, String xpath) {
@@ -22,38 +23,36 @@ public class Slimmer extends Task {
 
         this.xpath = xpath;
     }
-    
+
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
 
-        if (!in.hasMessage()) {
-            return;
-        }
+        while (in.hasMessage()) {
+            var m = in.getMessage();
 
-        var m = in.getMessage();
-        
-        if (!m.hasDocument()) {
-            throw new Exception("No hay ningun documento para leer");
-        }
+            if (!m.hasDocument()) {
+                throw new Exception("No hay ningun documento para leer");
+            }
 
-        var d = m.getDocument();
-        
-        var xf = XPathFactory.newInstance();
-        var x = xf.newXPath();
-        
-        var ce = x.compile(xpath);
-        var node = ce.evaluate(d, XPathConstants.NODE);
-        
-        if (node != null) {
-            var dr = (Document) d.cloneNode(true);
+            var d = m.getDocument();
 
-            var nodeToRemove = ce.evaluate(dr, XPathConstants.NODE);
+            var xf = XPathFactory.newInstance();
+            var x = xf.newXPath();
 
-            if (nodeToRemove != null && nodeToRemove instanceof Node) {
-                ((Node)nodeToRemove).getParentNode().removeChild((Node)nodeToRemove);
-                
-                outputSlots.get(0).setMessage(new Message(m.getId(), dr, m.getHeaders()));
+            var ce = x.compile(xpath);
+            var node = ce.evaluate(d, XPathConstants.NODE);
+
+            if (node != null) {
+                var dr = (Document) d.cloneNode(true);
+
+                var nodeToRemove = ce.evaluate(dr, XPathConstants.NODE);
+
+                if (nodeToRemove != null && nodeToRemove instanceof Node) {
+                    ((Node) nodeToRemove).getParentNode().removeChild((Node) nodeToRemove);
+
+                    outputSlots.get(0).setMessage(new Message(m.getId(), dr, m.getHeaders()));
+                }
             }
         }
     }

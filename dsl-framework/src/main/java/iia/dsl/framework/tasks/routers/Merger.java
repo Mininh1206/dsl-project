@@ -50,7 +50,7 @@ public class Merger extends Task {
         
         // Iterar sobre TODOS los inputSlots
         for (Slot inputSlot : inputSlots) {
-            if (inputSlot.hasMessage()) {
+            while (inputSlot.hasMessage()) {
                 var msg = inputSlot.getMessage();
 
                 if (msg.hasDocument()) {

@@ -32,19 +32,18 @@ public class CorrelationIdSetter extends Task {
       var inSlot = inputSlots.get(0);
       var outSlot = outputSlots.get(0);
 
-      if (!inSlot.hasMessage())
-         return;
+      while (inSlot.hasMessage()) {
+         // Intentar compatibilidad con uso por documentos individuales
+         var msg = inSlot.getMessage();
+         
+         if (!msg.hasDocument()) {
+            throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
+         }
+         
+         msg.addHeader(Message.CORRELATION_ID, generateId());
 
-      // Intentar compatibilidad con uso por documentos individuales
-      var msg = inSlot.getMessage();
-      
-      if (!msg.hasDocument()) {
-         throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
+         outSlot.setMessage(msg);
       }
-      
-      msg.addHeader(Message.CORRELATION_ID, generateId());
-
-      outSlot.setMessage(msg);
    }
 
    private String generateId() {

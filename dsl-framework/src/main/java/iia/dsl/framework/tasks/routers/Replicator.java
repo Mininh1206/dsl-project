@@ -11,10 +11,10 @@ public class Replicator extends Task {
 
     Replicator(String id, Slot inputSlot, List<Slot> outputSlots) {
         super(id, TaskType.ROUTER);
-        
+
         addInputSlot(inputSlot);
         outputSlots.forEach(this::addOutputSlot);
-        
+
         if (outputSlots.isEmpty()) {
             throw new IllegalArgumentException("Replicator debe tener al menos un slot de salida.");
         }
@@ -24,18 +24,16 @@ public class Replicator extends Task {
     public void execute() throws Exception {
         var in = inputSlots.get(0);
 
-        if (!in.hasMessage()) {
-            return;
-        }
+        while (in.hasMessage()) {
+            var m = in.getMessage();
 
-        var m = in.getMessage();
+            if (!m.hasDocument()) {
+                throw new Exception("Replicator '" + id + "' no tiene documento para duplicar.");
+            }
 
-        if (!m.hasDocument()) {
-            throw new Exception("Replicator '" + id + "' no tiene documento para duplicar.");
-        }
-
-        for (Slot outputSlot : outputSlots) {
-            outputSlot.setMessage(new Message(m));
+            for (Slot outputSlot : outputSlots) {
+                outputSlot.setMessage(new Message(m));
+            }
         }
     }
 }
