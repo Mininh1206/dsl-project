@@ -35,7 +35,7 @@ public class ContextSlimmer extends Task {
         }
         
         // Saca el xpath del cuerpo del mensaje de contexto
-        var xpath = "/xpath";
+        var xpath = "/context/xpath";
         var xpathFactory = XPathFactory.newInstance();
         var xpathExpr = xpathFactory.newXPath().compile(xpath);
         var contextNode = (Node) xpathExpr.evaluate(contextMessage.getDocument(), XPathConstants.NODE);
