@@ -9,6 +9,11 @@ public class MockConnector extends Connector {
         super(id);
         this.mockDocument = mockDocument;
     }
+
+    public MockConnector(Document mockDocument) {
+        super();
+        this.mockDocument = mockDocument;
+    }
     
     @Override
     public Document call(Document input) {

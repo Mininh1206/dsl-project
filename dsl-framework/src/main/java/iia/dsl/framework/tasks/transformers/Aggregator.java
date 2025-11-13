@@ -91,7 +91,9 @@ public class Aggregator extends Task {
             var nodeOfList = (Node) ce.evaluate(doc, XPathConstants.NODE);
 
             for (Message msg : messages.get(m.getId())) {
-                nodeOfList.appendChild(msg.getDocument());
+                // Importar el elemento raíz del fragmento al documento base
+                Node importedNode = doc.importNode(msg.getDocument().getDocumentElement(), true);
+                nodeOfList.appendChild(importedNode);
             }
 
             outputSlots.get(0).setMessage(new Message(m.getId(), doc));

@@ -9,6 +9,10 @@ public class ConsoleConnector extends Connector {
         super(id);
     }
     
+    public ConsoleConnector() {
+        super();
+    }
+    
     @Override
     public Document call(Document input) {
         System.out.println("=== Output Document ===");
