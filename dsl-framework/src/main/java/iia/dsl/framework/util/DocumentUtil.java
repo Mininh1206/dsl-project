@@ -4,6 +4,12 @@
  */
 package iia.dsl.framework.util;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,6 +31,21 @@ public class DocumentUtil {
         return sb.toString();
     }
 
+    public static Document createXMLDocument(String xmlContent) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            
+            ByteArrayInputStream input = new ByteArrayInputStream(
+                xmlContent.getBytes(StandardCharsets.UTF_8)
+            );
+            
+            return builder.parse(input);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating XML document", e);
+        }
+    }
+    
     private static String getTree(NodeList childs, int profundidad) {
         StringBuilder sb = new StringBuilder();
 

@@ -17,6 +17,10 @@ public abstract class Task extends ExecutableElement {
         this.outputSlots = new ArrayList<>();
         this.type = type;
     }
+
+    public void addOutputSlots(List<Slot> outputsSlot) {
+        outputSlots.addAll(outputsSlot);
+    }
     
     public final void addInputSlot(Slot slot) {
         inputSlots.add(slot);
