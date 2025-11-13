@@ -15,18 +15,13 @@ public class RequestPort extends Port {
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
     }
-    
-    public Document call(Document request) {
-        return connector.call(request);
-    }
-    
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         if (!inputSlot.hasMessage())
             throw new RuntimeException("No hay mensaje en el slot de entrada para RequestPort '" + id + "'");
 
         Document requestDoc = inputSlot.getMessage().getDocument();
-        Document responseDoc = call(requestDoc);
+        Document responseDoc = connector.call(requestDoc);
         outputSlot.setMessage(new Message(responseDoc));
     }
 }

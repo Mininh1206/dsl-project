@@ -12,7 +12,7 @@ public class OutputPort extends Port {
     }
     
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         // Lógica de salida: tomar documento del slot y enviarlo mediante el connector
         if (inputSlot.getDocument() != null) {
             connector.call(inputSlot.getDocument());

@@ -15,7 +15,7 @@ public class InputPort extends Port {
     }
     
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         // 1. Llama al connector para obtener datos del exterior
         Document doc = connector.call(null);
         

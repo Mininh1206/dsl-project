@@ -13,5 +13,5 @@ public abstract class Connector extends Element {
         super();
     }
     
-    public abstract Document call(Document input);
+    public abstract Document call(Document input) throws Exception;
 }
