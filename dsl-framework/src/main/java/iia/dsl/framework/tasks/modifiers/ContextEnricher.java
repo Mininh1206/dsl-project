@@ -37,7 +37,7 @@ public class ContextEnricher extends Task {
         }
 
         // Saca el xpath del cuerpo del mensaje de contexto
-        var xpath = "/xpath";
+        var xpath = "/context/xpath";
         var xpathFactory = XPathFactory.newInstance();
         var xpathExpr = xpathFactory.newXPath().compile(xpath);
         var contextNode = (Node) xpathExpr.evaluate(contextMessage.getDocument(), XPathConstants.NODE);
@@ -45,12 +45,12 @@ public class ContextEnricher extends Task {
             throw new Exception("No se encontró el nodo de XPath en el mensaje de contexto para ContextEnricher");
         }
 
-        // Saca el cuerpo con el cual enriquecer el mensaje
-        xpath = "/body";
+        // Saca el cuerpo con el cual enriquecer el mensaje desde el mensaje de contexto
+        xpath = "/context/body";
         xpathExpr = xpathFactory.newXPath().compile(xpath);
-        var bodyNode = (Node) xpathExpr.evaluate(m.getDocument(), XPathConstants.NODE);
+        var bodyNode = (Node) xpathExpr.evaluate(contextMessage.getDocument(), XPathConstants.NODE);
         if (bodyNode == null) {
-            throw new Exception("No se encontró el nodo de cuerpo en el mensaje para ContextEnricher");
+            throw new Exception("No se encontró el nodo de cuerpo en el mensaje de contexto para ContextEnricher");
         }
 
         // Saca el nodo a enriquecer usando el xpath del mensaje de contexto
@@ -62,7 +62,9 @@ public class ContextEnricher extends Task {
         }
 
         // Enriquece el nodo
-        enrichNode.appendChild(bodyNode.cloneNode(true));
+        // Importar el nodo del contexto al documento del mensaje antes de agregarlo
+        Node importedBody = m.getDocument().importNode(bodyNode, true);
+        enrichNode.appendChild(importedBody);
         m.setDocument(m.getDocument());
         outputSlots.get(0).setMessage(m);
     }
