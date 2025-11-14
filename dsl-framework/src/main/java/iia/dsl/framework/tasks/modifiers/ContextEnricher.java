@@ -30,6 +30,14 @@ public class ContextEnricher extends Task {
         var in = inputSlots.get(0);
         var context = inputSlots.get(1);
 
+        // Validar que ambos slots tengan mensajes antes de procesar
+        if (!in.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de entrada para ContextEnricher");
+        }
+        if (!context.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de contexto para ContextEnricher");
+        }
+
         while (in.hasMessage() && context.hasMessage()) {
             var m = in.getMessage();
             var contextMessage = context.getMessage();
