@@ -23,6 +23,14 @@ public class ContextSlimmer extends Task {
         var in = inputSlots.get(0);
         var context = inputSlots.get(1);
         
+        // Validar que ambos slots tengan mensajes antes de procesar
+        if (!in.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de entrada para ContextSlimmer");
+        }
+        if (!context.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de contexto para ContextSlimmer");
+        }
+        
         while (in.hasMessage() && context.hasMessage()) {
             var m = in.getMessage();
             var contextMessage = context.getMessage();
@@ -32,7 +40,7 @@ public class ContextSlimmer extends Task {
             }
             
             // Saca el xpath del cuerpo del mensaje de contexto
-            var xpath = "/xpath";
+            var xpath = "/context/xpath";
             var xpathFactory = XPathFactory.newInstance();
             var xpathExpr = xpathFactory.newXPath().compile(xpath);
             var contextNode = (Node) xpathExpr.evaluate(contextMessage.getDocument(), XPathConstants.NODE);
