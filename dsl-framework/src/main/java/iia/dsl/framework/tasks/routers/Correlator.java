@@ -74,6 +74,9 @@ public class Correlator extends Task {
 
                 } else {
                     correlationId = m.getHeader(Message.CORRELATION_ID);
+                    if (correlationId == null) {
+                        throw new Exception("El mensaje no tiene los headers necesarios (correlation-id) para Correlator '" + id + "'");
+                    }
                 }
 
                 if (!messages.containsKey(correlationId)) {
