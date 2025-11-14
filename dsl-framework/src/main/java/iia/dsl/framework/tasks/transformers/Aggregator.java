@@ -41,6 +41,11 @@ public class Aggregator extends Task {
     public void execute() throws Exception {
         var in = inputSlots.get(0);
 
+        // Validar que el slot tenga mensaje antes de procesar
+        if (!in.hasMessage()) {
+            throw new Exception("No hay Mensaje en el slot de entrada para Aggregator");
+        }
+
         while (in.hasMessage()) {
             var m = in.getMessage();
 
