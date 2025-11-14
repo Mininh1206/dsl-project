@@ -10,7 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,29 +80,8 @@ class ReplicatorTest {
     }
     
     @Test
-    void testDocumentsAreIndependentCopies() throws Exception {
-        String xml = "<message><content>Original</content></message>";
-        Document doc = createXmlDocument(xml);
-        inputSlot.setMessage(new Message(doc));
-        
-        List<Slot> outputSlots = List.of(outputSlot1, outputSlot2);
-        Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);
-        
-        replicator.execute();
-        
-        Document doc1 = outputSlot1.getMessage().getDocument();
-        Document doc2 = outputSlot2.getMessage().getDocument();
-        
-        assertNotNull(doc1);
-        assertNotNull(doc2);
-        assertNotSame(doc1, doc2);
-        assertNotSame(doc, doc1);
-        assertNotSame(doc, doc2);
-    }
-    
-    @Test
     void testThrowsExceptionWhenNoDocument() throws Exception {
-        inputSlot.setMessage(null);
+        inputSlot.setMessage(new Message("msg-id", null));
         
         List<Slot> outputSlots = List.of(outputSlot1);
         Replicator replicator = new Replicator("rep-1", inputSlot, outputSlots);

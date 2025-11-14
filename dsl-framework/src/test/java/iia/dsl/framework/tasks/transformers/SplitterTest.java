@@ -1,13 +1,12 @@
 package iia.dsl.framework.tasks.transformers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -64,9 +63,11 @@ public class SplitterTest {
     
     @Test
     public void testThrowsWhenNoDocument() {
-        // Arrange - Slot sin documento
+        // Arrange - Mensaje sin documento
         Slot input = new Slot("input");
         Slot output = new Slot("output");
+        
+        input.setMessage(new Message("msg-id", null));
         
         Splitter splitter = new Splitter("splitter-2", input, output, "/order/items/item");
         

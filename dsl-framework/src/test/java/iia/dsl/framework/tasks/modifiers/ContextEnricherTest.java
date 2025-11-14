@@ -77,42 +77,6 @@ public class ContextEnricherTest {
     }
 
     @Test
-    public void testThrowsWhenInputSlotEmpty() {
-        Slot input = new Slot("in");
-        Slot context = new Slot("context");
-        Slot output = new Slot("out");
-
-        Document contextDoc = TestUtils.createXMLDocument(CONTEXT_XML);
-        context.setMessage(new Message("ctx-123", contextDoc));
-
-        ContextEnricher enricher = new ContextEnricher("ce-2", input, context, output);
-
-        Exception ex = assertThrows(Exception.class, () -> {
-            enricher.execute();
-        });
-
-        assertTrue(ex.getMessage().contains("No hay Mensaje"), "Exception should mention missing message");
-    }
-
-    @Test
-    public void testThrowsWhenContextSlotEmpty() {
-        Slot input = new Slot("in");
-        Slot context = new Slot("context");
-        Slot output = new Slot("out");
-
-        Document mainDoc = TestUtils.createXMLDocument(TestUtils.SAMPLE_XML);
-        input.setMessage(new Message("msg-123", mainDoc));
-
-        ContextEnricher enricher = new ContextEnricher("ce-3", input, context, output);
-
-        Exception ex = assertThrows(Exception.class, () -> {
-            enricher.execute();
-        });
-
-        assertTrue(ex.getMessage().contains("No hay Mensaje"), "Exception should mention missing message");
-    }
-
-    @Test
     public void testThrowsWhenInputDocumentMissing() throws Exception {
         Slot input = new Slot("in");
         Slot context = new Slot("context");

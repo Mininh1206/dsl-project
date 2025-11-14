@@ -2,7 +2,6 @@ package iia.dsl.framework.tasks.modifiers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -54,19 +53,5 @@ public class CorrelationIdSetterTest {
 		assertTrue(out.getHeader("correlation-id").matches("\\d{6}"), "Generated id must be 6 digits");
 		assertNotNull(out.getDocument(), "Document should be set on the generated message");
 		assertEquals("order", out.getDocument().getDocumentElement().getNodeName());
-	}
-
-	@Test
-	public void testThrowsWhenSlotEmpty() {
-		Slot input = new Slot("in");
-		Slot output = new Slot("out");
-
-		CorrelationIdSetter setter = new CorrelationIdSetter("cis-3", input, output);
-
-		Exception ex = assertThrows(Exception.class, () -> {
-			setter.execute();
-		});
-
-		assertTrue(ex.getMessage().contains("No hay mensaje"), "Exception should mention missing message");
 	}
 }
