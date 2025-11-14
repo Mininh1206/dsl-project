@@ -33,6 +33,10 @@ public class Replicator extends Task {
 
             for (Slot outputSlot : outputSlots) {
                 outputSlot.setMessage(new Message(m));
+                // Clonar el documento para que cada salida tenga copia independiente??
+                // Document clonedDoc = (Document) m.getDocument().cloneNode(true);
+                // Message clonedMessage = new Message(m.getId(), clonedDoc, m.getHeaders());
+                // outputSlot.setMessage(clonedMessage);
             }
         }
     }
