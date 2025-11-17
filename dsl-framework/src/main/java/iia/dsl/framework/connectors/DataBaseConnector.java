@@ -14,7 +14,6 @@ import org.w3c.dom.Document;
 
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
-import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 public class DataBaseConnector extends Connector {
@@ -98,7 +97,11 @@ public class DataBaseConnector extends Connector {
     }
     
     @Override
-    public void execute(Port port) throws Exception {
+    public void execute() throws Exception {
+        if (port == null) {
+            throw new IllegalStateException("Port no asignado al DataBaseConnector");
+        }
+        
         if (port instanceof InputPort) {
             // Para InputPort con DB: ejecutar consulta sin parámetros
             throw new UnsupportedOperationException("DataBaseConnector no soporta InputPort - use RequestPort");

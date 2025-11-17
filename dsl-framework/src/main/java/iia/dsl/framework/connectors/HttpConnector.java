@@ -4,7 +4,6 @@ import org.w3c.dom.Document;
 
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
-import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 public class HttpConnector extends Connector {
@@ -22,7 +21,11 @@ public class HttpConnector extends Connector {
     }
     
     @Override
-    public void execute(Port port) throws Exception {
+    public void execute() throws Exception {
+        if (port == null) {
+            throw new IllegalStateException("Port no asignado al HttpConnector");
+        }
+        
         if (port instanceof InputPort) {
             InputPort inputPort = (InputPort) port;
             Document doc = call(null);

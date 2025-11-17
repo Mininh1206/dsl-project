@@ -2,21 +2,14 @@ package iia.dsl.framework.ports;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.connectors.Connector;
 import iia.dsl.framework.core.Slot;
 
 public class OutputPort extends Port {
     private final Slot inputSlot;
 
-    public OutputPort(String id, Connector connector, Slot inputSlot) {
-        super(id, connector);
+    public OutputPort(String id, Slot inputSlot) {
+        super(id);
         this.inputSlot = inputSlot;
-    }
-    
-    @Override
-    public void execute() throws Exception {
-        // Delega al connector la ejecución
-        connector.execute(this);
     }
     
     /**

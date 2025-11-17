@@ -17,7 +17,6 @@ import org.xml.sax.SAXException;
 
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
-import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 public class FileConnector extends Connector {
@@ -65,7 +64,11 @@ public class FileConnector extends Connector {
     }
     
     @Override
-    public void execute(Port port) throws Exception {
+    public void execute() throws Exception {
+        if (port == null) {
+            throw new IllegalStateException("Port no asignado al FileConnector");
+        }
+        
         if (port instanceof InputPort) {
             InputPort inputPort = (InputPort) port;
             Document doc = call(null);

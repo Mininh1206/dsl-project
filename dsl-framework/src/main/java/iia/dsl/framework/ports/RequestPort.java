@@ -2,7 +2,6 @@ package iia.dsl.framework.ports;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.connectors.Connector;
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.DocumentUtil;
@@ -12,24 +11,18 @@ public class RequestPort extends Port {
     private final Slot outputSlot;
     private Message currentMessage; // Guardar el mensaje actual
 
-    public RequestPort(String id, Connector connector, Slot inputSlot, Slot outputSlot) {
-        super(id, connector);
+    public RequestPort(String id, Slot inputSlot, Slot outputSlot) {
+        super(id);
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
         this.currentMessage = null;
     }
 
-    public RequestPort(String id, Connector connector, Slot inputSlot, Slot outputSlot, String xslt) {
-        super(connector, xslt);
+    public RequestPort(String id, Slot inputSlot, Slot outputSlot, String xslt) {
+        super(id, xslt);
         this.inputSlot = inputSlot;
         this.outputSlot = outputSlot;
         this.currentMessage = null;
-    }
-
-    @Override
-    public void execute() throws Exception {
-        // Delega al connector la ejecución
-        connector.execute(this);
     }
     
     /**

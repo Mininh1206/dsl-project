@@ -2,16 +2,29 @@ package iia.dsl.framework.connectors;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.core.Element;
+import iia.dsl.framework.core.ExecutableElement;
 import iia.dsl.framework.ports.Port;
 
-public abstract class Connector extends Element {
+public abstract class Connector extends ExecutableElement {
+    protected Port port;
+    
     public Connector(String id) {
         super(id);
     }
 
     public Connector() {
         super();
+    }
+    
+    /**
+     * Asocia un port a este connector.
+     */
+    public void setPort(Port port) {
+        this.port = port;
+    }
+    
+    public Port getPort() {
+        return port;
     }
     
     /**
@@ -22,8 +35,9 @@ public abstract class Connector extends Element {
     protected abstract Document call(Document input) throws Exception;
     
     /**
-     * Ejecuta el port usando este connector.
+     * Ejecuta el connector con el port asociado.
      * El connector obtiene/envía datos y delega al port el manejo del documento.
      */
-    public abstract void execute(Port port) throws Exception;
+    @Override
+    public abstract void execute() throws Exception;
 }

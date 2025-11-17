@@ -4,7 +4,6 @@ import org.w3c.dom.Document;
 
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
-import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.util.DocumentUtil;
 
@@ -25,7 +24,11 @@ public class ConsoleConnector extends Connector {
     }
     
     @Override
-    public void execute(Port port) throws Exception {
+    public void execute() throws Exception {
+        if (port == null) {
+            throw new IllegalStateException("Port no asignado al ConnectorConsole");
+        }
+        
         if (port instanceof InputPort) {
             // Para InputPort: leer de consola no implementado, retornar null
             System.out.println("ConsoleConnector no soporta lectura (InputPort)");

@@ -151,11 +151,18 @@ public class Main {
             var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
             var consoleConnectorOutput = new ConsoleConnector();
 
-            // === PASO 3: Configurar Ports ===
-            var inputPort = new InputPort(mockConnectorInput, inputSlotSystem);
-            var requestPortFrias = new RequestPort("requestPortFrias", mockConnectorFrias, inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
-            var requestPortCalientes = new RequestPort("requestPortCalientes", mockConnectorCalientes, inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
-            var outputPort = new OutputPort("outputPort", consoleConnectorOutput, outputSlotSystem);
+            // === PASO 3: Configurar Ports y asociarlos a Connectors ===
+            var inputPort = new InputPort(inputSlotSystem);
+            mockConnectorInput.setPort(inputPort);
+            
+            var requestPortFrias = new RequestPort("requestPortFrias", inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
+            mockConnectorFrias.setPort(requestPortFrias);
+            
+            var requestPortCalientes = new RequestPort("requestPortCalientes", inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
+            mockConnectorCalientes.setPort(requestPortCalientes);
+            
+            var outputPort = new OutputPort("outputPort", outputSlotSystem);
+            consoleConnectorOutput.setPort(outputPort);
 
             // === PASO 5: Configurar Tasks Factories ===
             var modifierFactory = new ModifierFactory();
@@ -188,7 +195,7 @@ public class Main {
             // === PASO 7: Configurar Flow ===
             Flow flow = new Flow();
 
-            flow.addElement(inputPort);
+            flow.addElement(mockConnectorInput);
             flow.addElement(splitter);
             flow.addElement(correlatorIdSetter);
             flow.addElement(distributor);
@@ -196,15 +203,15 @@ public class Main {
             flow.addElement(replicatorCalientes);
             flow.addElement(translatorFrias);
             flow.addElement(translatorCalientes);
-            flow.addElement(requestPortFrias);
-            flow.addElement(requestPortCalientes);
+            flow.addElement(mockConnectorFrias);
+            flow.addElement(mockConnectorCalientes);
             flow.addElement(correlatorFrias);
             flow.addElement(correlatorCalientes);
             flow.addElement(contextContentEnricherFrias);
             flow.addElement(contextContentEnricherCalientes);
             flow.addElement(merger);
             flow.addElement(aggregator);
-            flow.addElement(outputPort);
+            flow.addElement(consoleConnectorOutput);
 
             // === EJECUCIÓN ===
             flow.execute();
