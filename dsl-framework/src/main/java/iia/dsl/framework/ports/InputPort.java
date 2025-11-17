@@ -2,31 +2,32 @@ package iia.dsl.framework.ports;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.connectors.Connector;
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 
 public class InputPort extends Port {
     private final Slot outputSlot;
 
-    public InputPort(Connector connector, Slot outputSlot) {
-        super(connector);
+    public InputPort(Slot outputSlot) {
+        super();
         this.outputSlot = outputSlot;
     }
 
-    public InputPort(String id, Connector connector, Slot outputSlot) {
-        super(id, connector);
+    public InputPort(String id, Slot outputSlot) {
+        super(id);
         this.outputSlot = outputSlot;
     }
     
-    @Override
-    public void execute() throws Exception {
-        // 1. Llama al connector para obtener datos del exterior
-        Document doc = connector.call(null);
-        
-        // 2. Coloca el documento en el slot para que las tasks lo procesen
+    /**
+     * Maneja el documento recibido del connector.
+     * Este método es llamado por el connector después de obtener los datos.
+     */
+    public void handleDocument(Document doc) {
         outputSlot.setMessage(new Message(doc));
-        
         System.out.println("InputPort '" + id + "' cargó documento en slot '" + outputSlot.getId() + "'");
+    }
+    
+    public Slot getOutputSlot() {
+        return outputSlot;
     }
 }

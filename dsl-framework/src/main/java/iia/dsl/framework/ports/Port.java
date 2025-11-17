@@ -2,28 +2,27 @@ package iia.dsl.framework.ports;
 
 import java.util.Optional;
 
-import iia.dsl.framework.connectors.Connector;
-import iia.dsl.framework.core.ExecutableElement;
+import iia.dsl.framework.core.Element;
 
-public abstract class Port extends ExecutableElement {
-    protected final Connector connector;
+public abstract class Port extends Element {
     protected final Optional<String> xslt;
     
-    public Port(Connector connector) {
+    public Port() {
         super();
-        this.connector = connector;
         this.xslt = Optional.empty();
     }
 
-    public Port(Connector connector, String xslt) {
-        super();
-        this.connector = connector;
-        this.xslt = Optional.of(xslt);
-    }
-
-    public Port(String id, Connector connector) {
+    public Port(String id, String xslt) {
         super(id);
-        this.connector = connector;
+        this.xslt = Optional.ofNullable(xslt);
+    }
+
+    public Port(String id) {
+        super(id);
         this.xslt = Optional.empty();
+    }
+    
+    public Optional<String> getXslt() {
+        return xslt;
     }
 }
