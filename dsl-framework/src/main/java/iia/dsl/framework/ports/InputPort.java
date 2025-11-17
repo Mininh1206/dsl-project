@@ -21,12 +21,20 @@ public class InputPort extends Port {
     
     @Override
     public void execute() throws Exception {
-        // 1. Llama al connector para obtener datos del exterior
-        Document doc = connector.call(null);
-        
-        // 2. Coloca el documento en el slot para que las tasks lo procesen
+        // Delega al connector la ejecución
+        connector.execute(this);
+    }
+    
+    /**
+     * Maneja el documento recibido del connector.
+     * Este método es llamado por el connector después de obtener los datos.
+     */
+    public void handleDocument(Document doc) {
         outputSlot.setMessage(new Message(doc));
-        
         System.out.println("InputPort '" + id + "' cargó documento en slot '" + outputSlot.getId() + "'");
+    }
+    
+    public Slot getOutputSlot() {
+        return outputSlot;
     }
 }

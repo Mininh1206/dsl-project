@@ -28,19 +28,13 @@ public class Flow extends ExecutableElement {
     }
     
     @Override
-    public void execute() {
-        try {
-            System.out.println("Ejecutando Flow: " + id);
-            
-            for (ExecutableElement element : elements) {
-                element.execute();
-            }
-
-            System.out.println("\nFlow completado exitosamente\n");
-            
-        } catch (Exception e) {
-            System.err.println("Error en Flow: " + e.getMessage());
-            throw new RuntimeException("Flow execution failed", e);
+    public void execute() throws Exception {
+        System.out.println("Ejecutando Flow: " + id);
+        
+        for (ExecutableElement element : elements) {
+            element.execute();
         }
+
+        System.out.println("\nFlow completado exitosamente\n");
     }
 }

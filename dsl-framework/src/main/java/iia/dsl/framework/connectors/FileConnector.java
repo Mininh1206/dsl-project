@@ -15,6 +15,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import iia.dsl.framework.ports.InputPort;
+import iia.dsl.framework.ports.OutputPort;
+import iia.dsl.framework.ports.Port;
+import iia.dsl.framework.ports.RequestPort;
+
 public class FileConnector extends Connector {
 
     private final String filePath;
@@ -33,7 +38,7 @@ public class FileConnector extends Connector {
     }
 
     @Override
-    public Document call(Document input) {
+    protected Document call(Document input) {
         if (input == null) {
             try {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -55,6 +60,28 @@ public class FileConnector extends Connector {
                 return null;
             } catch (TransformerException e) {
                 throw new RuntimeException("Error writing to file: " + filePath, e);
+            }
+        }
+    }
+    
+    @Override
+    public void execute(Port port) throws Exception {
+        if (port instanceof InputPort) {
+            InputPort inputPort = (InputPort) port;
+            Document doc = call(null);
+            inputPort.handleDocument(doc);
+        } else if (port instanceof OutputPort) {
+            OutputPort outputPort = (OutputPort) port;
+            Document doc = outputPort.getDocument();
+            if (doc != null) {
+                call(doc);
+            }
+        } else if (port instanceof RequestPort) {
+            RequestPort requestPort = (RequestPort) port;
+            Document request = requestPort.getRequestDocument();
+            if (request != null) {
+                Document response = call(request);
+                requestPort.handleResponse(response);
             }
         }
     }
