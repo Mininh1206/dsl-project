@@ -32,6 +32,13 @@ public class Slot extends Element {
         return messages.poll();
     }
 
+    /**
+     * Devuelve el siguiente mensaje sin consumirlo.
+     */
+    public Message peekMessage() {
+        return messages.peek();
+    }
+
     public int getMessageCount() {
         return messages.size();
     }

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
-
 import iia.dsl.framework.connectors.ConsoleConnector;
-import iia.dsl.framework.connectors.MockConnector;
+import iia.dsl.framework.connectors.FileConnector;
 import iia.dsl.framework.core.Flow;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.ports.InputPort;
@@ -15,11 +13,12 @@ import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.tasks.modifiers.ModifierFactory;
 import iia.dsl.framework.tasks.routers.RouterFactory;
-import static iia.dsl.framework.util.DocumentUtil.createXMLDocument;
+import iia.dsl.framework.util.DocumentUtil;
 
 public class Main {
 
     // XML de entrada: pedido de productos de cafe y coca-cola
+
     private static final String ORDER_1 = """
             <?xml version="1.0" encoding="UTF-8"?>
             <cafe_order>
@@ -111,7 +110,7 @@ public class Main {
             // === CONFIGURACIÓN INICIAL ===
 
             System.out.println(ORDER_1);
-            Document orderDoc = createXMLDocument(ORDER_1);
+            String basePath = "src/main/java/iia/dsl/framework/";
 
             // === PASO 1: Configurar Slots ===
             var inputSlotSystem = new Slot();
@@ -146,10 +145,56 @@ public class Main {
             var outputSlotSystem = new Slot();
 
             // === PASO 2: Configurar Connectors ===
-            var mockConnectorInput = new MockConnector(orderDoc);
-            var mockConnectorFrias = new MockConnector(createXMLDocument(ORDER_COLD));
-            var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
+            var mockConnectorInput = new FileConnector(basePath + "order1.xml");
+            var mockConnectorFrias = new FileConnector(basePath + "order_cold.xml");
+            var mockConnectorCalientes = new FileConnector(basePath + "order_hot.xml");
             var consoleConnectorOutput = new ConsoleConnector();
+
+            // Debug: crear conectores temporales con InputPort para leer y mostrar los documentos
+            try {
+                var dbg1 = new FileConnector(basePath + "order1.xml");
+                var dbgSlot1 = new Slot();
+                dbg1.setPort(new InputPort(dbgSlot1));
+                dbg1.execute();
+                var maybe1 = dbgSlot1.peekMessage();
+                if (maybe1 != null && maybe1.hasDocument()) {
+                    System.out.println("order1.xml cargado:\n" + DocumentUtil.documentToString(maybe1.getDocument()));
+                } else {
+                    System.out.println("No se obtuvo documento de order1.xml");
+                }
+            } catch (Exception e) {
+                System.out.println("Error leyendo order1.xml: " + e.getMessage());
+            }
+
+            try {
+                var dbg2 = new FileConnector(basePath + "order_cold.xml");
+                var dbgSlot2 = new Slot();
+                dbg2.setPort(new InputPort(dbgSlot2));
+                dbg2.execute();
+                var maybe2 = dbgSlot2.peekMessage();
+                if (maybe2 != null && maybe2.hasDocument()) {
+                    System.out.println("order_cold.xml cargado:\n" + DocumentUtil.documentToString(maybe2.getDocument()));
+                } else {
+                    System.out.println("No se obtuvo documento de order_cold.xml");
+                }
+            } catch (Exception e) {
+                System.out.println("Error leyendo order_cold.xml: " + e.getMessage());
+            }
+
+            try {
+                var dbg3 = new FileConnector(basePath + "order_hot.xml");
+                var dbgSlot3 = new Slot();
+                dbg3.setPort(new InputPort(dbgSlot3));
+                dbg3.execute();
+                var maybe3 = dbgSlot3.peekMessage();
+                if (maybe3 != null && maybe3.hasDocument()) {
+                    System.out.println("order_hot.xml cargado:\n" + DocumentUtil.documentToString(maybe3.getDocument()));
+                } else {
+                    System.out.println("No se obtuvo documento de order_hot.xml");
+                }
+            } catch (Exception e) {
+                System.out.println("Error leyendo order_hot.xml: " + e.getMessage());
+            }
 
             // === PASO 3: Configurar Ports y asociarlos a Connectors ===
             var inputPort = new InputPort(inputSlotSystem);
@@ -220,3 +265,4 @@ public class Main {
         }
     }
 }
+

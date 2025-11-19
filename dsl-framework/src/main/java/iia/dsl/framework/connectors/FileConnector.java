@@ -50,6 +50,22 @@ public class FileConnector extends Connector {
             }
         } else {
             // Write document to file
+            // If this connector is acting as a RequestPort, treat the file as a
+            // static response source: read and return its Document instead of
+            // treating the call as a pure write. This mimics MockConnector's
+            // behavior for request/response testing.
+            if (this.port instanceof iia.dsl.framework.ports.RequestPort) {
+                try {
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(file);
+                    doc.getDocumentElement().normalize();
+                    return doc;
+                } catch (ParserConfigurationException | SAXException | IOException e) {
+                    throw new RuntimeException("Error reading file (as response): " + filePath, e);
+                }
+            }
+
             try {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
@@ -61,6 +77,22 @@ public class FileConnector extends Connector {
                 throw new RuntimeException("Error writing to file: " + filePath, e);
             }
         }
+    }
+
+    /**
+     * Lectura directa del documento desde el fichero (API pública).
+     * Útil para depuración o uso fuera del flujo de `Port`.
+     */
+    public Document readDocument() {
+        return call(null);
+    }
+
+    /**
+     * Escritura directa del documento al fichero (API pública).
+     * @return null
+     */
+    public void writeDocument(Document doc) {
+        call(doc);
     }
     
     @Override
