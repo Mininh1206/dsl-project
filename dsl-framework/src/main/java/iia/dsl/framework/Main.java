@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
-
-import iia.dsl.framework.connectors.ConsoleConnector;
-import iia.dsl.framework.connectors.MockConnector;
+import iia.dsl.framework.connectors.FileConnector;
 import iia.dsl.framework.core.Flow;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.ports.InputPort;
@@ -15,7 +12,6 @@ import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.tasks.modifiers.ModifierFactory;
 import iia.dsl.framework.tasks.routers.RouterFactory;
-import static iia.dsl.framework.util.DocumentUtil.createXMLDocument;
 
 public class Main {
 
@@ -35,22 +31,6 @@ public class Main {
             </drink>
             </drinks>
             </cafe_order>
-                                    """;
-
-    private static final String ORDER_COLD = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <drink>
-            <name>coca-cola</name>
-            <state>ready</state>
-            </drink>
-                                    """;
-
-    private static final String ORDER_HOT = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <drink>
-            <name>cafe</name>
-            <state>ready</state>
-            </drink>
                                     """;
 
     private static final String ORDER_CONTEXT_XSLT = """
@@ -111,7 +91,6 @@ public class Main {
             // === CONFIGURACIÓN INICIAL ===
 
             System.out.println(ORDER_1);
-            Document orderDoc = createXMLDocument(ORDER_1);
 
             // === PASO 1: Configurar Slots ===
             var inputSlotSystem = new Slot();
@@ -146,23 +125,23 @@ public class Main {
             var outputSlotSystem = new Slot();
 
             // === PASO 2: Configurar Connectors ===
-            var mockConnectorInput = new MockConnector(orderDoc);
-            var mockConnectorFrias = new MockConnector(createXMLDocument(ORDER_COLD));
-            var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
-            var consoleConnectorOutput = new ConsoleConnector();
+            var fileConnectorInput = new FileConnector("input.xml");
+            var fileConnectorFrias = new FileConnector("frias.xml");
+            var fileConnectorCalientes = new FileConnector("calientes.xml");
+            var fileConnectorOutput = new FileConnector("output.xml");
 
             // === PASO 3: Configurar Ports y asociarlos a Connectors ===
             var inputPort = new InputPort(inputSlotSystem);
-            mockConnectorInput.setPort(inputPort);
+            fileConnectorInput.setPort(inputPort);
             
             var requestPortFrias = new RequestPort("requestPortFrias", inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
-            mockConnectorFrias.setPort(requestPortFrias);
+            fileConnectorFrias.setPort(requestPortFrias);
             
             var requestPortCalientes = new RequestPort("requestPortCalientes", inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
-            mockConnectorCalientes.setPort(requestPortCalientes);
+            fileConnectorCalientes.setPort(requestPortCalientes);
             
             var outputPort = new OutputPort("outputPort", outputSlotSystem);
-            consoleConnectorOutput.setPort(outputPort);
+            fileConnectorOutput.setPort(outputPort);
 
             // === PASO 5: Configurar Tasks Factories ===
             var modifierFactory = new ModifierFactory();
@@ -195,7 +174,7 @@ public class Main {
             // === PASO 7: Configurar Flow ===
             Flow flow = new Flow();
 
-            flow.addElement(mockConnectorInput);
+            flow.addElement(fileConnectorInput);
             flow.addElement(splitter);
             flow.addElement(correlatorIdSetter);
             flow.addElement(distributor);
@@ -203,18 +182,19 @@ public class Main {
             flow.addElement(replicatorCalientes);
             flow.addElement(translatorFrias);
             flow.addElement(translatorCalientes);
-            flow.addElement(mockConnectorFrias);
-            flow.addElement(mockConnectorCalientes);
+            flow.addElement(fileConnectorFrias);
+            flow.addElement(fileConnectorCalientes);
             flow.addElement(correlatorFrias);
             flow.addElement(correlatorCalientes);
             flow.addElement(contextContentEnricherFrias);
             flow.addElement(contextContentEnricherCalientes);
             flow.addElement(merger);
             flow.addElement(aggregator);
-            flow.addElement(consoleConnectorOutput);
+            flow.addElement(fileConnectorOutput);
 
             // === EJECUCIÓN ===
             flow.execute();
+            
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -83,7 +83,7 @@ public class FileConnector extends Connector {
             RequestPort requestPort = (RequestPort) port;
             Document request = requestPort.getRequestDocument();
             if (request != null) {
-                Document response = call(request);
+                Document response = call(null);
                 requestPort.handleResponse(response);
             }
         }
