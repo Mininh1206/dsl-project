@@ -16,8 +16,27 @@ public class HttpConnector extends Connector {
     
     @Override
     protected Document call(Document input) {
-        // TODO implement
-        return input;
+        try {
+            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(url))
+                    .GET()
+                    .build();
+
+            java.net.http.HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            String responseBody = response.body();
+
+            // Intentar parsear la respuesta como XML
+            try {
+                return iia.dsl.framework.util.DocumentUtil.createXMLDocument(responseBody);
+            } catch (Exception e) {
+                // Si falla (ej. es JSON), lo envolvemos en un XML genérico
+                String wrappedXml = "<response><![CDATA[" + responseBody + "]]></response>";
+                return iia.dsl.framework.util.DocumentUtil.createXMLDocument(wrappedXml);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error en HttpConnector llamando a " + url, e);
+        }
     }
     
     @Override

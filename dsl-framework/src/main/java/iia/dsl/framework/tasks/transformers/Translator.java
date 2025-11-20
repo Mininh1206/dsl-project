@@ -32,9 +32,9 @@ public class Translator extends Task {
 
             var d = m.getDocument();
 
-            DocumentUtil.applyXslt(d, xslt);
+            var transformedDoc = DocumentUtil.applyXslt(d, xslt);
 
-            outputSlots.get(0).setMessage(new Message(m.getId(), d, m.getHeaders()));
+            outputSlots.get(0).setMessage(new Message(m.getId(), transformedDoc, m.getHeaders()));
         }
     }
 }
