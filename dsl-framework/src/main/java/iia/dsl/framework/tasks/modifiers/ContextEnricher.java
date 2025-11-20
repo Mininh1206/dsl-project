@@ -69,7 +69,7 @@ public class ContextEnricher extends Task {
 
             // Enriquece el nodo
             // Importar el nodo del contexto al documento del mensaje antes de agregarlo
-            Node importedBody = m.getDocument().importNode(bodyNode, true);
+            Node importedBody = m.getDocument().importNode(bodyNode.getFirstChild(), true);
             enrichNode.appendChild(importedBody);
 
             outputSlots.get(0).setMessage(m);

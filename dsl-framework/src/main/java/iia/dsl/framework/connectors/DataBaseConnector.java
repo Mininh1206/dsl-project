@@ -12,8 +12,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
-import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
+import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 public class DataBaseConnector extends Connector {
@@ -23,7 +23,8 @@ public class DataBaseConnector extends Connector {
 
     private final Connection connection;
 
-    public DataBaseConnector(String connectionString, String username, String password) {
+    public DataBaseConnector(Port port, String connectionString, String username, String password) {
+        super(port);
         this.username = Optional.ofNullable(username);
         this.password = Optional.ofNullable(password);
 
@@ -41,14 +42,7 @@ public class DataBaseConnector extends Connector {
         }
     }
 
-    @Override
-    protected Document call(Document input) throws Exception {
-        // Make the conection with jdbc using connectionString
-        // and if input is null throw an exception
-        if (input == null) {
-            throw new IllegalArgumentException("Input document cannot be null");
-        }
-
+    protected Document sqlQuery(Document input) throws Exception {
         // Saca la consulta del input con el xpath /sql
         var xpath = "/sql";
         var xpathFactory = XPathFactory.newInstance();
@@ -102,22 +96,25 @@ public class DataBaseConnector extends Connector {
             throw new IllegalStateException("Port no asignado al DataBaseConnector");
         }
         
-        if (port instanceof InputPort) {
-            // Para InputPort con DB: ejecutar consulta sin parámetros
-            throw new UnsupportedOperationException("DataBaseConnector no soporta InputPort - use RequestPort");
-        } else if (port instanceof OutputPort) {
+        if (port instanceof OutputPort) {
             OutputPort outputPort = (OutputPort) port;
             Document doc = outputPort.getDocument();
-            if (doc != null) {
-                call(doc);
+
+            if (doc == null) {
+                throw new IllegalArgumentException("Output document is null");
             }
+
+            sqlQuery(doc);
         } else if (port instanceof RequestPort) {
             RequestPort requestPort = (RequestPort) port;
             Document request = requestPort.getRequestDocument();
-            if (request != null) {
-                Document response = call(request);
-                requestPort.handleResponse(response);
+
+            if (request == null) {
+                throw new IllegalArgumentException("Request document is null");
             }
+
+            Document response = sqlQuery(request);
+            requestPort.handleResponse(response);
         }
     }
 }

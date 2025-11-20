@@ -145,24 +145,20 @@ public class Main {
 
             var outputSlotSystem = new Slot();
 
-            // === PASO 2: Configurar Connectors ===
-            var mockConnectorInput = new MockConnector(orderDoc);
-            var mockConnectorFrias = new MockConnector(createXMLDocument(ORDER_COLD));
-            var mockConnectorCalientes = new MockConnector(createXMLDocument(ORDER_HOT));
-            var consoleConnectorOutput = new ConsoleConnector();
-
-            // === PASO 3: Configurar Ports y asociarlos a Connectors ===
+            // === PASO 2: Configurar Ports y asociarlos a Connectors ===
             var inputPort = new InputPort(inputSlotSystem);
-            mockConnectorInput.setPort(inputPort);
             
             var requestPortFrias = new RequestPort("requestPortFrias", inputSlotRequestPortFrias, outputSlotRequestPortFrias, ORDER_CONTEXT_XSLT);
-            mockConnectorFrias.setPort(requestPortFrias);
             
             var requestPortCalientes = new RequestPort("requestPortCalientes", inputSlotRequestPortCalientes, outputSlotRequestPortCalientes, ORDER_CONTEXT_XSLT);
-            mockConnectorCalientes.setPort(requestPortCalientes);
             
             var outputPort = new OutputPort("outputPort", outputSlotSystem);
-            consoleConnectorOutput.setPort(outputPort);
+            
+            // === PASO 3: Configurar Connectors ===
+            var mockConnectorInput = new MockConnector(inputPort, orderDoc);
+            var mockConnectorFrias = new MockConnector(requestPortFrias, createXMLDocument(ORDER_COLD));
+            var mockConnectorCalientes = new MockConnector(requestPortCalientes, createXMLDocument(ORDER_HOT));
+            var consoleConnectorOutput = new ConsoleConnector(outputPort);
 
             // === PASO 5: Configurar Tasks Factories ===
             var modifierFactory = new ModifierFactory();

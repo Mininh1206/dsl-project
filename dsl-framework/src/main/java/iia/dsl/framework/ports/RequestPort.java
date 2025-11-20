@@ -36,7 +36,7 @@ public class RequestPort extends Port {
         currentMessage = inputSlot.getMessage();
             
         if (!currentMessage.hasDocument())
-            throw new Exception("No hay Documento en el slot de entrada para RequestPort '" + id + "'");
+            throw new Exception("No hay Documento en el mensaje del slot de entrada para RequestPort '" + id + "'");
 
         return currentMessage.getDocument();
     }
