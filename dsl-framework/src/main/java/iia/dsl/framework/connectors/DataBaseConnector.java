@@ -49,7 +49,6 @@ public class DataBaseConnector extends Connector {
         var xpathExpr = xpathFactory.newXPath().compile(xpath);
         var sqlQuery = (String) xpathExpr.evaluate(input, XPathConstants.STRING);
 
-        // Ejecuta la consulta, insert, update, delete, select o lo que sea
         var statement = connection.createStatement();
         boolean hasResultSet = statement.execute(sqlQuery);
 
