@@ -7,35 +7,35 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Merger Task - Router que combina múltiples flujos de entrada en uno de salida.
+ * Router que combina múltiples flujos de entrada en un único flujo de salida.
  * 
- * A diferencia del Aggregator (que combina contenidos), el Merger simplemente
- * fusiona/mezcla los mensajes de varios slots de entrada en uno de salida,
- * preservando los documentos sin modificar su contenido.
+ * Procesa los mensajes de todos los slots de entrada y los envía al slot de
+ * salida en orden secuencial,
+ * sin modificar el contenido de los mensajes. Actúa como un embudo.
  * 
  * @author Javi
  */
 public class Merger extends Task {
-    
+
     /**
      * Constructor del Merger.
      * 
-     * @param id Identificador único de la tarea
+     * @param id         Identificador único de la tarea
      * @param inputSlots Lista de slots de entrada a fusionar
      * @param outputSlot Slot de salida donde se escribirán todos los mensajes
      */
     Merger(String id, List<Slot> inputSlots, Slot outputSlot) {
         super(id, TaskType.ROUTER);
-        
+
         // Añadir todos los input slots
         for (Slot slot : inputSlots) {
             addInputSlot(slot);
         }
-        
+
         // Un único output slot
         addOutputSlot(outputSlot);
     }
-    
+
     /**
      * Ejecuta el merge de todos los documentos disponibles en los input slots.
      * 
@@ -47,7 +47,7 @@ public class Merger extends Task {
     @Override
     public void execute() throws Exception {
         Slot outputSlot = outputSlots.get(0);
-        
+
         // Iterar sobre TODOS los inputSlots
         for (Slot inputSlot : inputSlots) {
             while (inputSlot.hasMessage()) {

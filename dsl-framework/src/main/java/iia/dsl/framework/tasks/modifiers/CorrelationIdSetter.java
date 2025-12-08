@@ -9,9 +9,12 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * CorrelationIdSetter - asigna un ID de correlación (secuencial) al Message
- * presente en el slot de entrada y lo publica en el slot de salida.
- *
+ * Tarea que asigna un identificador de correlación único y secuencial al
+ * mensaje.
+ * Añade el header 'CorrelationId' al mensaje entrante.
+ * 
+ * Útil para rastrear mensajes o agrupar fragmentos posteriormente (ej. en
+ * Aggregator o Correlator).
  */
 public class CorrelationIdSetter extends Task {
 
@@ -35,11 +38,11 @@ public class CorrelationIdSetter extends Task {
       while (inSlot.hasMessage()) {
          // Intentar compatibilidad con uso por documentos individuales
          var msg = inSlot.getMessage();
-         
+
          if (!msg.hasDocument()) {
             throw new Exception("No hay mensaje/documento en el slot de entrada para CorrelationIdSetter '" + id + "'");
          }
-         
+
          msg.addHeader(Message.CORRELATION_ID, generateId());
 
          outSlot.setMessage(msg);

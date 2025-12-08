@@ -17,6 +17,23 @@ import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
+/**
+ * Connector para la interacción con bases de datos SQL mediante JDBC.
+ * Permite ejecutar consultas SQL definidas dinámicamente en el mensaje de
+ * entrada.
+ * 
+ * Los documentos de entrada deben tener la siguiente estructura:
+ * <sql>SELECT * FROM users WHERE id = 1</sql>
+ * 
+ * La salida será un documento XML con la estructura:
+ * <resultset>
+ * <row>
+ * <column_name>value</column_name>
+ * ...
+ * </row>
+ * ...
+ * </resultset>
+ */
 public class DataBaseConnector extends Connector {
 
     private final Optional<String> username;

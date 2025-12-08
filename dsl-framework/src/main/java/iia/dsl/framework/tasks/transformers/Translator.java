@@ -6,6 +6,12 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 import iia.dsl.framework.util.DocumentUtil;
 
+/**
+ * Transformer que aplica una transformación XSLT al documento del mensaje.
+ * 
+ * Transforma la estructura del XML de entrada a un nuevo formato definido por
+ * la hoja de estilos XSLT proporcinada.
+ */
 public class Translator extends Task {
 
     private final String xslt;

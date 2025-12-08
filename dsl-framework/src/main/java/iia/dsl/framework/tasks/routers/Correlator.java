@@ -17,11 +17,16 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Correlator Task - Router que correlaciona mensajes de múltiples entradas.
+ * Router que sincroniza y agrupa mensajes provenientes de múltiples entradas
+ * basándose en un ID de correlación.
  * 
- * Correlaciona los mensajes de sus múltiples entradas (normalmente usando un
- * id)
- * y los saca al mismo tiempo por sus múltiples salidas.
+ * Espera a recibir mensajes con el mismo ID de correlación en todas sus
+ * entradas antes de liberarlos
+ * simultáneamente por sus respectivas salidas.
+ * 
+ * El ID de correlación se obtiene, por defecto, del header 'CorrelationId', o
+ * mediante una expresión XPath
+ * configurada opcionalmente.
  */
 public class Correlator extends Task {
     private final Map<String, Message[]> messages;
@@ -55,7 +60,7 @@ public class Correlator extends Task {
 
             while (in.hasMessage()) {
                 var m = in.getMessage();
-            
+
                 if (!m.hasDocument()) {
                     throw new Exception("No hay Documento en el slot de entrada para Correlator '" + id + "'");
                 }
@@ -79,7 +84,7 @@ public class Correlator extends Task {
                 if (!messages.containsKey(correlationId)) {
                     messages.put(correlationId, new Message[outputSlots.size()]);
                 }
-                
+
                 messages.get(correlationId)[i] = m;
 
                 boolean allReceived = true;
@@ -90,7 +95,7 @@ public class Correlator extends Task {
                     }
                 }
 
-                if(allReceived){
+                if (allReceived) {
                     for (int j = 0; j < outputSlots.size(); j++) {
                         outputSlots.get(j).setMessage(new Message(messages.get(correlationId)[j]));
                     }

@@ -20,6 +20,14 @@ import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
+/**
+ * Connector para leer o escribir archivos en el sistema de archivos local.
+ * 
+ * - Si actúa como InputPort: Lee el archivo especificado y lo inyecta como un
+ * documento XML en el flujo.
+ * - Si actúa como OutputPort: Escribe el documento XML recibido en el archivo
+ * especificado.
+ */
 public class FileConnector extends Connector {
 
     private final String filePath;

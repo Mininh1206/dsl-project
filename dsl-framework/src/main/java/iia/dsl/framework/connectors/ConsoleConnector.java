@@ -6,6 +6,13 @@ import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.util.DocumentUtil;
 
+/**
+ * Connector que envía el contenido del documento recibido a la salida estándar
+ * (System.out).
+ * Útil para depuración y visualización del flujo de mensajes.
+ * 
+ * No requiere una estructura específica en el documento de entrada.
+ */
 public class ConsoleConnector extends Connector {
     public ConsoleConnector(Port port) {
         super(port);

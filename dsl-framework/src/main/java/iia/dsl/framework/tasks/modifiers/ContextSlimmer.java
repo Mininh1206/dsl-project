@@ -9,6 +9,19 @@ import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
+/**
+ * Tarea que reduce (elimina partes de) un mensaje principal basándose en un
+ * mensaje de contexto.
+ * Requiere dos slots de entrada:
+ * 1. Slot principal (mensaje a modificar).
+ * 2. Slot de contexto (mensaje con las reglas de reducción).
+ * 
+ * El mensaje de contexto debe tener la estructura:
+ * <context>
+ * <xpath>/ruta/nodo/a/eliminar</xpath> <!-- XPath en el mensaje principal del
+ * nodo que será eliminado -->
+ * </context>
+ */
 public class ContextSlimmer extends Task {
     ContextSlimmer(String id, Slot inputSlot, Slot contextSlot, Slot outputSlot) {
         super(id, TaskType.MODIFIER);
@@ -17,20 +30,20 @@ public class ContextSlimmer extends Task {
         addInputSlot(contextSlot);
         addOutputSlot(outputSlot);
     }
-    
+
     @Override
     public void execute() throws Exception {
         var in = inputSlots.get(0);
         var context = inputSlots.get(1);
-        
+
         while (in.hasMessage() && context.hasMessage()) {
             var m = in.getMessage();
             var contextMessage = context.getMessage();
-            
+
             if (!m.hasDocument() || !contextMessage.hasDocument()) {
                 throw new Exception("No hay Documento en el slot de entrada para ContextSlimmer");
             }
-            
+
             // Saca el xpath del cuerpo del mensaje de contexto
             var xpath = "/context/xpath";
             var xpathFactory = XPathFactory.newInstance();

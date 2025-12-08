@@ -15,10 +15,14 @@ import iia.dsl.framework.tasks.TaskType;
 import iia.dsl.framework.util.Storage;
 
 /**
- * Aggregator Task - Transformer que reconstruye mensajes divididos previamente.
- *
- * Reconstruye un mensaje dividido previamente por una tarea Splitter/Chopper.
- * Agrupa los mensajes por su ID de conjunto y los combina en un solo documento.
+ * Transformer que reconstruye un documento original a partir de sus fragmentos.
+ * 
+ * Funciona en conjunto con Splitter. Utiliza los headers 'NUM_FRAG' y
+ * 'TOTAL_FRAG' para recolectar
+ * todas las piezas de un mensaje original (identificado por su ID) y las
+ * reinserta en el documento
+ * original (recuperado de una unidad de almacenamiento 'Storage') en la
+ * ubicación indicada por 'itemXPath'.
  *
  * @author javi
  */
@@ -73,7 +77,8 @@ public class Aggregator extends Task {
             if (allReceived) {
                 var storage = Storage.getInstance();
 
-                // Reconstruir el documento completo con el documento almacenado y los fragmentos recibidos en el xpath
+                // Reconstruir el documento completo con el documento almacenado y los
+                // fragmentos recibidos en el xpath
                 var doc = storage.retrieveDocument(m.getId());
 
                 if (doc == null) {
