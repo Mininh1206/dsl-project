@@ -1,7 +1,7 @@
 
 package iia.dsl.framework.tasks.routers;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,17 +34,21 @@ public class Correlator extends Task {
 
     Correlator(String id, List<Slot> inputSlots, List<Slot> outputSlots) {
         super(id, TaskType.ROUTER);
-        this.inputSlots.addAll(inputSlots);
+        for (Slot slot : inputSlots) {
+            addInputSlot(slot);
+        }
         this.outputSlots.addAll(outputSlots);
-        this.messages = new HashMap<>();
+        this.messages = new ConcurrentHashMap<>();
         this.xPath = Optional.empty();
     }
 
     Correlator(String id, List<Slot> inputSlots, List<Slot> outputSlots, String xPath) {
         super(id, TaskType.ROUTER);
-        this.inputSlots.addAll(inputSlots);
+        for (Slot slot : inputSlots) {
+            addInputSlot(slot);
+        }
         this.outputSlots.addAll(outputSlots);
-        this.messages = new HashMap<>();
+        this.messages = new ConcurrentHashMap<>();
         this.xPath = Optional.of(xPath);
     }
 
@@ -60,7 +64,6 @@ public class Correlator extends Task {
 
             while (in.hasMessage()) {
                 var m = in.getMessage();
-
                 if (!m.hasDocument()) {
                     throw new Exception("No hay Documento en el slot de entrada para Correlator '" + id + "'");
                 }
@@ -79,27 +82,39 @@ public class Correlator extends Task {
 
                 } else {
                     correlationId = m.getHeader(Message.CORRELATION_ID);
+                    if (correlationId == null) {
+                        correlationId = m.getId();
+                    }
                 }
 
-                if (!messages.containsKey(correlationId)) {
-                    messages.put(correlationId, new Message[outputSlots.size()]);
+                Message[] msgs;
+                synchronized (messages) {
+                    if (!messages.containsKey(correlationId)) {
+                        messages.put(correlationId, new Message[outputSlots.size()]);
+                    }
+                    msgs = messages.get(correlationId);
                 }
 
-                messages.get(correlationId)[i] = m;
+                boolean allReceived = false;
+                synchronized (msgs) {
+                    msgs[i] = m;
 
-                boolean allReceived = true;
-                for (Message msg : messages.get(correlationId)) {
-                    if (msg == null) {
-                        allReceived = false;
-                        break;
+                    allReceived = true;
+                    for (int k = 0; k < msgs.length; k++) {
+                        if (msgs[k] == null) {
+                            allReceived = false;
+                            break;
+                        }
                     }
                 }
 
                 if (allReceived) {
-                    for (int j = 0; j < outputSlots.size(); j++) {
-                        outputSlots.get(j).setMessage(new Message(messages.get(correlationId)[j]));
+                    synchronized (messages) {
+                        messages.remove(correlationId);
                     }
-                    messages.remove(correlationId);
+                    for (int j = 0; j < outputSlots.size(); j++) {
+                        outputSlots.get(j).setMessage(new Message(msgs[j]));
+                    }
                 }
             }
         }

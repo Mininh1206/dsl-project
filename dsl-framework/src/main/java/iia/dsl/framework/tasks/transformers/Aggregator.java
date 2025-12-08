@@ -1,6 +1,6 @@
 package iia.dsl.framework.tasks.transformers;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
@@ -37,7 +37,7 @@ public class Aggregator extends Task {
 
         addInputSlot(inputSlot);
         addOutputSlot(outputSlot);
-        messages = new HashMap<>();
+        messages = new ConcurrentHashMap<>();
         this.itemXPath = itemXPath;
     }
 
@@ -59,22 +59,32 @@ public class Aggregator extends Task {
             var numFrag = Integer.parseInt(m.getHeader(Message.NUM_FRAG));
             var totalFrag = Integer.parseInt(m.getHeader(Message.TOTAL_FRAG));
 
-            if (!messages.containsKey(m.getId())) {
-                messages.put(m.getId(), new Message[totalFrag]);
+            Message[] fragments;
+            // Atomic initialization of the array if absent
+            synchronized (messages) {
+                if (!messages.containsKey(m.getId())) {
+                    messages.put(m.getId(), new Message[totalFrag]);
+                }
+                fragments = messages.get(m.getId());
             }
 
-            messages.get(m.getId())[numFrag] = m;
+            // Sync on the specific fragment array to ensure consistent updates and checks
+            boolean allReceived = false;
+            synchronized (fragments) {
+                fragments[numFrag] = m;
 
-            // Verificar si todos los fragmentos han sido recibidos
-            boolean allReceived = true;
-            for (Message msg : messages.get(m.getId())) {
-                if (msg == null) {
-                    allReceived = false;
-                    break;
+                allReceived = true;
+                for (int i = 0; i < fragments.length; i++) {
+                    if (fragments[i] == null) {
+                        allReceived = false;
+                        break;
+                    }
                 }
             }
 
             if (allReceived) {
+                messages.remove(m.getId()); // Clean up map
+
                 var storage = Storage.getInstance();
 
                 // Reconstruir el documento completo con el documento almacenado y los
@@ -91,7 +101,7 @@ public class Aggregator extends Task {
                 var ce = x.compile(itemXPath);
                 var nodeOfList = (Node) ce.evaluate(doc, XPathConstants.NODE);
 
-                for (Message msg : messages.get(m.getId())) {
+                for (Message msg : fragments) {
                     var itemNode = doc.importNode(
                             msg.getDocument().getDocumentElement(), true);
                     nodeOfList.appendChild(itemNode);

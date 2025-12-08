@@ -72,40 +72,51 @@ public class DataBaseConnector extends Connector {
         var sqlQuery = (String) xpathExpr.evaluate(input, XPathConstants.STRING);
 
         var statement = connection.createStatement();
-        boolean hasResultSet = statement.execute(sqlQuery);
 
-        if (hasResultSet) {
-            // Si tiene resultado, lo transforma a XML
-            var resultSet = statement.getResultSet();
-            var resultSetMetaData = resultSet.getMetaData();
-            var columnCount = resultSetMetaData.getColumnCount();
+        // Split and execute statements sequentially
+        String[] queries = sqlQuery.split(";");
 
-            // Crear el documento XML
-            var docBuilder = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            var resultDoc = docBuilder.newDocument();
-            var rootElement = resultDoc.createElement("resultset");
-            resultDoc.appendChild(rootElement);
-
-            // Iterar sobre las filas del resultado
-            while (resultSet.next()) {
-                var rowElement = resultDoc.createElement("row");
-                rootElement.appendChild(rowElement);
-
-                // Iterar sobre las columnas
-                for (int i = 1; i <= columnCount; i++) {
-                    var columnName = resultSetMetaData.getColumnName(i);
-                    var columnValue = resultSet.getString(i);
-
-                    var columnElement = resultDoc.createElement(columnName);
-                    if (columnValue != null) {
-                        columnElement.setTextContent(columnValue);
-                    }
-                    rowElement.appendChild(columnElement);
-                }
+        for (String query : queries) {
+            String trimmedQuery = query.trim();
+            if (trimmedQuery.isEmpty()) {
+                continue;
             }
 
-            resultSet.close();
-            return resultDoc;
+            boolean hasResultSet = statement.execute(trimmedQuery);
+
+            if (hasResultSet) {
+                // Found a ResultSet
+                var resultSet = statement.getResultSet();
+                var resultSetMetaData = resultSet.getMetaData();
+                var columnCount = resultSetMetaData.getColumnCount();
+
+                // Crear el documento XML
+                var docBuilder = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                var resultDoc = docBuilder.newDocument();
+                var rootElement = resultDoc.createElement("resultset");
+                resultDoc.appendChild(rootElement);
+
+                // Iterar sobre las filas del resultado
+                while (resultSet.next()) {
+                    var rowElement = resultDoc.createElement("row");
+                    rootElement.appendChild(rowElement);
+
+                    // Iterar sobre las columnas
+                    for (int i = 1; i <= columnCount; i++) {
+                        var columnName = resultSetMetaData.getColumnName(i);
+                        var columnValue = resultSet.getString(i);
+
+                        var columnElement = resultDoc.createElement(columnName);
+                        if (columnValue != null) {
+                            columnElement.setTextContent(columnValue);
+                        }
+                        rowElement.appendChild(columnElement);
+                    }
+                }
+
+                resultSet.close();
+                return resultDoc;
+            }
         }
 
         return null;
@@ -118,7 +129,8 @@ public class DataBaseConnector extends Connector {
             Document doc = outputPort.getDocument();
 
             if (doc == null) {
-                throw new IllegalArgumentException("Output document is null");
+                // If concurrent execution, just wait for the event.
+                return;
             }
 
             sqlQuery(doc);
@@ -127,7 +139,8 @@ public class DataBaseConnector extends Connector {
             Document request = requestPort.getRequestDocument();
 
             if (request == null) {
-                throw new IllegalArgumentException("Request document is null");
+                // If concurrent execution, just wait for the event.
+                return;
             }
 
             Document response = sqlQuery(request);

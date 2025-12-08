@@ -24,7 +24,7 @@ public class RequestPort extends Port {
         this.outputSlot = outputSlot;
         this.currentMessage = null;
     }
-    
+
     /**
      * Obtiene el documento de request del slot de entrada.
      * Este método es llamado por el connector para obtener el documento a enviar.
@@ -34,13 +34,13 @@ public class RequestPort extends Port {
             return null;
 
         currentMessage = inputSlot.getMessage();
-            
+
         if (!currentMessage.hasDocument())
             throw new Exception("No hay Documento en el mensaje del slot de entrada para RequestPort '" + id + "'");
 
         return currentMessage.getDocument();
     }
-    
+
     /**
      * Maneja el documento de respuesta recibido del connector.
      * Este método es llamado por el connector después de recibir la respuesta.
@@ -48,25 +48,24 @@ public class RequestPort extends Port {
     public void handleResponse(Document responseDoc) throws Exception {
         if (responseDoc == null)
             return;
-        
+
         // Si hay una transformación XSLT definida, aplicarla al documento de respuesta
         if (xslt.isPresent()) {
             var xsltString = xslt.get();
             responseDoc = DocumentUtil.applyXslt(responseDoc, xsltString);
         }
 
-        // Usar los headers del mensaje guardado
         if (currentMessage != null) {
             outputSlot.setMessage(new Message(responseDoc, currentMessage.getHeaders()));
         } else {
             outputSlot.setMessage(new Message(responseDoc));
         }
     }
-    
+
     public Slot getInputSlot() {
         return inputSlot;
     }
-    
+
     public Slot getOutputSlot() {
         return outputSlot;
     }

@@ -61,6 +61,8 @@ public class Splitter extends Task {
 
             if (nodes != null) {
                 int totalNodes = nodes.getLength();
+                java.util.List<Message> bufferedMessages = new java.util.ArrayList<>();
+
                 for (int i = 0; i < totalNodes; i++) {
                     Node node = nodes.item(i);
                     if (node != null) {
@@ -77,12 +79,22 @@ public class Splitter extends Task {
                         Message msg = new Message(m.getId(), dr, m.getHeaders());
                         msg.addHeader(Message.NUM_FRAG, "" + i);
                         msg.addHeader(Message.TOTAL_FRAG, "" + totalNodes);
-                        outputSlots.get(0).setMessage(msg);
+
+                        bufferedMessages.add(msg);
                     }
                 }
-            }
 
-            Storage.getInstance().storeDocument(m.getId(), d);
+                // CRITICAL: Store the document BEFORE emitting messages to ensure
+                // Aggregator can find it when fragments arrive.
+                Storage.getInstance().storeDocument(m.getId(), d);
+
+                for (Message msg : bufferedMessages) {
+                    outputSlots.get(0).setMessage(msg);
+                }
+            } else {
+                // Even if no nodes, we should probably store the document?
+                Storage.getInstance().storeDocument(m.getId(), d);
+            }
         }
     }
 }

@@ -40,7 +40,9 @@ public class HttpConnector extends Connector {
 
     public HttpConnector(Port port) {
         super(port);
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(java.time.Duration.ofSeconds(2)) // Adjusted timeout
+                .build();
 
         if (port instanceof InputPort) {
             throw new IllegalArgumentException("HttpConnector no soporta InputPort");
@@ -48,25 +50,30 @@ public class HttpConnector extends Connector {
     }
 
     @Override
-    public void execute() throws Exception {
-        if (port instanceof OutputPort) {
-            OutputPort outputPort = (OutputPort) port;
-            Document doc = outputPort.getDocument();
+    public void execute() {
+        try {
+            if (port instanceof OutputPort) {
+                OutputPort outputPort = (OutputPort) port;
+                Document doc = outputPort.getDocument();
 
-            if (doc == null) {
-                throw new IllegalArgumentException("Output document is null");
+                if (doc == null) {
+                    // If concurrent execution, just wait for the event.
+                    return;
+                }
+                sendRequest(doc);
+            } else if (port instanceof RequestPort) {
+                RequestPort requestPort = (RequestPort) port;
+                Document request = requestPort.getRequestDocument();
+
+                if (request == null) {
+                    return;
+                }
+
+                Document response = sendRequest(request);
+                requestPort.handleResponse(response);
             }
-            sendRequest(doc);
-        } else if (port instanceof RequestPort) {
-            RequestPort requestPort = (RequestPort) port;
-            Document request = requestPort.getRequestDocument();
-
-            if (request == null) {
-                throw new IllegalArgumentException("Request document is null");
-            }
-
-            Document response = sendRequest(request);
-            requestPort.handleResponse(response);
+        } catch (Exception ex) {
+            System.err.println("[ERROR] Unexpected error in HttpConnector: " + ex.getMessage());
         }
     }
 
@@ -81,6 +88,9 @@ public class HttpConnector extends Connector {
             throw new IllegalArgumentException("Missing /http-request/url in input document");
         }
 
+        System.err.println("[HTTP] Sending " + xpath.evaluate("/http-request/method", input, XPathConstants.STRING)
+                + " request to: " + urlString);
+
         // 2. Method
         String methodString = (String) xpath.evaluate("/http-request/method", input, XPathConstants.STRING);
         Method method;
@@ -91,7 +101,8 @@ public class HttpConnector extends Connector {
         }
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(urlString));
+                .uri(URI.create(urlString))
+                .timeout(java.time.Duration.ofSeconds(5)); // Request timeout
 
         // 3. Headers
         NodeList headerNodes = (NodeList) xpath.evaluate("/http-request/headers/header", input, XPathConstants.NODESET);
@@ -132,13 +143,51 @@ public class HttpConnector extends Connector {
             default -> throw new UnsupportedOperationException("Metodo no soportado: " + method);
         }
 
-        HttpResponse<String> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+        int maxRetries = 3;
+        int attempt = 0;
+        Exception lastException = null;
 
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            return stringToDocument(response.body());
-        } else {
-            throw new RuntimeException("Error HTTP: " + response.statusCode() + " " + response.body());
+        while (attempt < maxRetries) {
+            try {
+                HttpResponse<String> response = httpClient.send(requestBuilder.build(),
+                        HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                    System.err.println("[HTTP] Response received: " + response.statusCode());
+                    return stringToDocument(response.body());
+                } else if (response.statusCode() >= 500) {
+                    // SERVER ERROR, retry
+                    throw new RuntimeException("Server Error " + response.statusCode());
+                } else {
+                    // CLIENT ERROR, do not retry
+                    throw new RuntimeException("Client Error HTTP: " + response.statusCode() + " " + response.body());
+                }
+            } catch (Exception e) {
+                attempt++;
+                lastException = e;
+                System.err.println("[WARNING] HTTP " + method + " to " + urlString + " failed (Attempt " + attempt + "/"
+                        + maxRetries + "): " + e.getMessage());
+
+                // Only sleep if we are going to retry
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
         }
+        // If we get here, all retries failed.
+        // We log and return null or throw?
+        // Returning null might cause NPE downstream if not handled, but catching in
+        // execute() handles generic exceptions.
+        // Let's rethrow properly or allow execute() catch to handle it.
+        System.err.println("[ERROR] All " + maxRetries + " retries failed for " + urlString + ". Return Fallback.");
+        // Fallback: return an error document so the flow does not hang.
+        return stringToDocument("<error>Service Unavailable</error>");
+        // throw new RuntimeException("HTTP Request failed after retries",
+        // lastException);
     }
 
     private String nodeContentToString(Node node) {

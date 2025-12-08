@@ -19,6 +19,7 @@ import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
+import iia.dsl.framework.core.Slot;
 
 /**
  * Connector para leer o escribir archivos en el sistema de archivos local.
@@ -32,6 +33,11 @@ public class FileConnector extends Connector {
 
     private final String filePath;
     private final File file;
+
+    @Override
+    public void onMessageAvailable(Slot slot) {
+        super.onMessageAvailable(slot);
+    }
 
     public FileConnector(Port port, String filePath) {
         super(port);
@@ -48,17 +54,41 @@ public class FileConnector extends Connector {
     public void execute() throws Exception {
         if (port instanceof InputPort inputPort) {
             try {
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(file);
-                doc.getDocumentElement().normalize();
-                inputPort.handleDocument(doc);
+                if (file.isDirectory()) {
+                    File[] xmlFiles = file.listFiles((dir, name) -> name.toLowerCase().endsWith(".xml"));
+                    if (xmlFiles != null) {
+                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                        for (File xmlFile : xmlFiles) {
+                            Document doc = dBuilder.parse(xmlFile);
+                            doc.getDocumentElement().normalize();
+                            inputPort.handleDocument(doc);
+                        }
+                    }
+                } else {
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(file);
+                    doc.getDocumentElement().normalize();
+                    inputPort.handleDocument(doc);
+                }
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                throw new RuntimeException("Error reading file: " + filePath, e);
+                throw new RuntimeException("Error reading file(s) from: " + filePath, e);
             }
         } else if (port instanceof OutputPort outputPort) {
             try {
                 Document doc = outputPort.getDocument();
+                if (doc == null)
+                    return;
+
+                System.err.println("DEBUG: FileConnector ready to write.");
+                System.err.println("DEBUG: Doc child nodes: " + doc.getChildNodes().getLength());
+                if (doc.getDocumentElement() != null) {
+                    System.err.println("DEBUG: Root Name: " + doc.getDocumentElement().getNodeName());
+                } else {
+                    System.err.println("DEBUG: Root is NULL!");
+                }
+
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(doc);

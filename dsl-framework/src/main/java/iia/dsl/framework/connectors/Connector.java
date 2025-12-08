@@ -6,6 +6,10 @@ import iia.dsl.framework.ports.Port;
 public abstract class Connector extends ExecutableElement {
     protected Port port;
 
+    public boolean isSource() {
+        return port instanceof iia.dsl.framework.ports.InputPort;
+    }
+
     public Connector(String id, Port port) {
         super(id);
 
@@ -14,6 +18,11 @@ public abstract class Connector extends ExecutableElement {
         }
 
         this.port = port;
+        if (port instanceof iia.dsl.framework.ports.OutputPort) {
+            ((iia.dsl.framework.ports.OutputPort) port).getInputSlot().addListener(this);
+        } else if (port instanceof iia.dsl.framework.ports.RequestPort) {
+            ((iia.dsl.framework.ports.RequestPort) port).getInputSlot().addListener(this);
+        }
     }
 
     public Connector(Port port) {
@@ -24,6 +33,11 @@ public abstract class Connector extends ExecutableElement {
         }
 
         this.port = port;
+        if (port instanceof iia.dsl.framework.ports.OutputPort) {
+            ((iia.dsl.framework.ports.OutputPort) port).getInputSlot().addListener(this);
+        } else if (port instanceof iia.dsl.framework.ports.RequestPort) {
+            ((iia.dsl.framework.ports.RequestPort) port).getInputSlot().addListener(this);
+        }
     }
 
     /**

@@ -35,6 +35,7 @@ public abstract class Task extends ExecutableElement {
 
     public final void addInputSlot(Slot slot) {
         inputSlots.add(slot);
+        slot.addListener(this);
     }
 
     public final void addOutputSlot(Slot slot) {
