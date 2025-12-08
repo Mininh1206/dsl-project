@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
+import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
@@ -25,6 +26,11 @@ public class DataBaseConnector extends Connector {
 
     public DataBaseConnector(Port port, String connectionString, String username, String password) {
         super(port);
+
+        if (port instanceof InputPort) {
+            throw new IllegalArgumentException("DataBaseConnector no soporta InputPort");
+        }
+
         this.username = Optional.ofNullable(username);
         this.password = Optional.ofNullable(password);
 
@@ -34,7 +40,6 @@ public class DataBaseConnector extends Connector {
             } else {
                 connection = DriverManager.getConnection(connectionString);
             }
-
 
         } catch (SQLException e) {
             Logger.getLogger(DataBaseConnector.class.getName()).log(Level.SEVERE, "Error connecting to database", e);
@@ -57,23 +62,23 @@ public class DataBaseConnector extends Connector {
             var resultSet = statement.getResultSet();
             var resultSetMetaData = resultSet.getMetaData();
             var columnCount = resultSetMetaData.getColumnCount();
-            
+
             // Crear el documento XML
             var docBuilder = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder();
             var resultDoc = docBuilder.newDocument();
             var rootElement = resultDoc.createElement("resultset");
             resultDoc.appendChild(rootElement);
-            
+
             // Iterar sobre las filas del resultado
             while (resultSet.next()) {
                 var rowElement = resultDoc.createElement("row");
                 rootElement.appendChild(rowElement);
-                
+
                 // Iterar sobre las columnas
                 for (int i = 1; i <= columnCount; i++) {
                     var columnName = resultSetMetaData.getColumnName(i);
                     var columnValue = resultSet.getString(i);
-                    
+
                     var columnElement = resultDoc.createElement(columnName);
                     if (columnValue != null) {
                         columnElement.setTextContent(columnValue);
@@ -81,20 +86,16 @@ public class DataBaseConnector extends Connector {
                     rowElement.appendChild(columnElement);
                 }
             }
-            
+
             resultSet.close();
             return resultDoc;
         }
 
         return null;
     }
-    
+
     @Override
     public void execute() throws Exception {
-        if (port == null) {
-            throw new IllegalStateException("Port no asignado al DataBaseConnector");
-        }
-        
         if (port instanceof OutputPort) {
             OutputPort outputPort = (OutputPort) port;
             Document doc = outputPort.getDocument();

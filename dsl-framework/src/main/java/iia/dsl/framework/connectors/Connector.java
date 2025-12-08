@@ -3,19 +3,29 @@ package iia.dsl.framework.connectors;
 import iia.dsl.framework.core.ExecutableElement;
 import iia.dsl.framework.ports.Port;
 
-public abstract class Connector extends ExecutableElement { 
+public abstract class Connector extends ExecutableElement {
     protected Port port;
-    
+
     public Connector(String id, Port port) {
         super(id);
+
+        if (port == null) {
+            throw new IllegalArgumentException("Port no puede ser null");
+        }
+
         this.port = port;
     }
 
     public Connector(Port port) {
         super();
+
+        if (port == null) {
+            throw new IllegalArgumentException("Port no puede ser null");
+        }
+
         this.port = port;
     }
-    
+
     /**
      * Ejecuta el connector con el port asociado.
      * El connector obtiene/envía datos y delega al port el manejo del documento.

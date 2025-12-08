@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 import iia.dsl.framework.ports.InputPort;
 import iia.dsl.framework.ports.OutputPort;
 import iia.dsl.framework.ports.Port;
+import iia.dsl.framework.ports.RequestPort;
 
 public class FileConnector extends Connector {
 
@@ -26,16 +27,17 @@ public class FileConnector extends Connector {
 
     public FileConnector(Port port, String filePath) {
         super(port);
+
+        if (port instanceof RequestPort) {
+            throw new IllegalArgumentException("FileConnector no soporta RequestPort");
+        }
+
         this.filePath = filePath;
         this.file = new File(filePath);
     }
 
     @Override
     public void execute() throws Exception {
-        if (port == null) {
-            throw new IllegalStateException("Port no asignado al FileConnector");
-        }
-        
         if (port instanceof InputPort inputPort) {
             try {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

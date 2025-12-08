@@ -6,8 +6,8 @@
     <drink>
             <name>cafe</name>
             <type>hot</type>
-        <body><state>ready</state></body></drink><drink>
+        <state>ready</state></drink><drink>
             <name>coca-cola</name>
             <type>cold</type>
-        <body><state>ready</state></body></drink></drinks>
+        <state>ready</state></drink></drinks>
 </cafe_order>
