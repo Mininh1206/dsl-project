@@ -6,6 +6,11 @@ import iia.dsl.framework.core.Slot;
 
 import iia.dsl.framework.util.DocumentUtil;
 
+/**
+ * Puerto de salida que extrae mensajes de un Slot y los entrega a un Connector.
+ * Permite la exportación de resultados del flujo hacia sistemas externos.
+ * Puede aplicar una transformación XSLT final antes de la entrega.
+ */
 public class OutputPort extends Port {
     private final Slot inputSlot;
 
@@ -20,8 +25,12 @@ public class OutputPort extends Port {
     }
 
     /**
-     * Obtiene el documento del slot de entrada para enviarlo.
-     * Este método es llamado por el connector para obtener el documento a enviar.
+     * Obtiene el documento disponible en el slot de entrada para ser procesado por
+     * el Connector.
+     * Si no hay mensaje, retorna null.
+     * Aplica la transformación XSLT configurada si existe.
+     * 
+     * @return El documento XML (transformado o no) o null si el slot está vacío.
      */
     public Document getDocument() {
         if (!inputSlot.hasMessage()) {

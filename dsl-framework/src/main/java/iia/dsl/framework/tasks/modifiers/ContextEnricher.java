@@ -10,20 +10,30 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Tarea que enriquece un mensaje principal utilizando información de un mensaje
- * de contexto.
- * Requiere dos slots de entrada:
- * 1. Slot principal (mensaje a enriquecer).
- * 2. Slot de contexto (mensaje con los datos y reglas de enriquecimiento).
+ * Tarea de modificación contextual que enriquece un mensaje principal
+ * utilizando datos de un mensaje secundario (contexto).
  * 
- * El mensaje de contexto debe tener la estructura:
+ * <p>
+ * Requiere sincronizar dos entradas:
+ * <ol>
+ * <li><b>Input:</b> Mensaje principal a enriquecer.</li>
+ * <li><b>Context:</b> Mensaje que contiene los datos y las instrucciones de
+ * inserción.</li>
+ * </ol>
+ * 
+ * <p>
+ * Estructura esperada del mensaje de contexto:
+ * 
+ * <pre>
+ * {@code
  * <context>
- * <xpath>/ruta/nodo/destino</xpath> <!-- XPath en el mensaje principal donde se
- * insertará el contenido -->
- * <body>
- * <contenido>...</contenido> <!-- Contenido a insertar -->
- * </body>
+ *   <xpath>/ruta/destino/en/mensaje/principal</xpath>
+ *   <body>
+ *     <contenido>Datos a insertar...</contenido>
+ *   </body>
  * </context>
+ * }
+ * </pre>
  */
 public class ContextEnricher extends Task {
 

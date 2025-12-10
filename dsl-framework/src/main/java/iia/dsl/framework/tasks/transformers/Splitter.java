@@ -16,14 +16,20 @@ import iia.dsl.framework.tasks.TaskType;
 import iia.dsl.framework.util.Storage;
 
 /**
- * Transformer que divide un documento en múltiples fragmentos (mensajes).
+ * Tarea de transformación que divide un documento XML grande en múltiples
+ * mensajes más pequeños (fragmentos).
  * 
- * Separa nodos del documento original basándose en una expresión XPath
- * ('itemXPath').
- * - El documento original (sin los nodos extraídos) se guarda en 'Storage'.
- * - Cada nodo extraído se convierte en un nuevo mensaje independiente.
- * - Se añaden headers 'NUM_FRAG' y 'TOTAL_FRAG' para permitir su posterior
- * reagrupación (ej. con Aggregator).
+ * <p>
+ * Proceso:
+ * <ol>
+ * <li>Extrae una lista de nodos del documento original basándose en
+ * {@code itemXPath}.</li>
+ * <li>Guarda el documento original (menos los nodos extraídos) en el
+ * {@link Storage} para su posterior reconstrucción.</li>
+ * <li>Crea un nuevo mensaje por cada nodo extraído.</li>
+ * <li>Añade headers {@code NUM_FRAG} y {@code TOTAL_FRAG} a cda mensaje para
+ * facilitar la agregación.</li>
+ * </ol>
  */
 public class Splitter extends Task {
 

@@ -7,13 +7,20 @@ import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.util.DocumentUtil;
 
 /**
- * Connector que envía el contenido del documento recibido a la salida estándar
- * (System.out).
- * Útil para depuración y visualización del flujo de mensajes.
- * 
- * No requiere una estructura específica en el documento de entrada.
+ * Conector simple que imprime el contenido de los documentos XML recibidos en
+ * la salida estándar (System.out).
+ * Es útil principalmente para depuración (debug) y para visualizar el flujo de
+ * datos sin persistirlos.
+ * Solo puede asociarse a puertos de salida (OutputPort).
  */
 public class ConsoleConnector extends Connector {
+    /**
+     * Constructor para ConsoleConnector.
+     * 
+     * @param port El puerto de salida a monitorear.
+     * @throws IllegalArgumentException Si se intenta usar con InputPort o
+     *                                  RequestPort.
+     */
     public ConsoleConnector(Port port) {
         super(port);
 

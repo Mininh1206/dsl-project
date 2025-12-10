@@ -10,17 +10,26 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Tarea que reduce (elimina partes de) un mensaje principal basándose en un
- * mensaje de contexto.
- * Requiere dos slots de entrada:
- * 1. Slot principal (mensaje a modificar).
- * 2. Slot de contexto (mensaje con las reglas de reducción).
+ * Tarea de modificación contextual que elimina partes de un mensaje principal
+ * basándose en instrucciones de un mensaje secundario.
  * 
- * El mensaje de contexto debe tener la estructura:
+ * <p>
+ * Sincroniza dos entradas:
+ * <ol>
+ * <li><b>Input:</b> Mensaje a reducir.</li>
+ * <li><b>Context:</b> Mensaje que indica qué eliminar.</li>
+ * </ol>
+ * 
+ * <p>
+ * Estructura esperada del mensaje de contexto:
+ * 
+ * <pre>
+ * {@code
  * <context>
- * <xpath>/ruta/nodo/a/eliminar</xpath> <!-- XPath en el mensaje principal del
- * nodo que será eliminado -->
+ *   <xpath>/ruta/nodo/a/eliminar</xpath>
  * </context>
+ * }
+ * </pre>
  */
 public class ContextSlimmer extends Task {
     ContextSlimmer(String id, Slot inputSlot, Slot contextSlot, Slot outputSlot) {

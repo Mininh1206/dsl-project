@@ -5,6 +5,11 @@ import org.w3c.dom.Document;
 import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 
+/**
+ * Puerto de entrada que recibe datos desde un Connector y los inyecta en un
+ * Slot.
+ * Actúa como la fuente de mensajes para el flujo interno.
+ */
 public class InputPort extends Port {
     private final Slot outputSlot;
 
@@ -17,16 +22,19 @@ public class InputPort extends Port {
         super(id);
         this.outputSlot = outputSlot;
     }
-    
+
     /**
-     * Maneja el documento recibido del connector.
-     * Este método es llamado por el connector después de obtener los datos.
+     * Recibe un documento desde el mundo exterior (vía Connector) e inyecta un
+     * nuevo mensaje
+     * en el Slot de salida asociado.
+     * 
+     * @param doc El documento XML recibido.
      */
     public void handleDocument(Document doc) {
-        outputSlot.setMessage(new Message(doc));
         System.out.println("InputPort '" + id + "' cargó documento en slot '" + outputSlot.getId() + "'");
+        outputSlot.setMessage(new Message(doc));
     }
-    
+
     public Slot getOutputSlot() {
         return outputSlot;
     }

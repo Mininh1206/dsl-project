@@ -9,12 +9,16 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Tarea que asigna un identificador de correlación único y secuencial al
+ * Tarea modificadora que inyecta un identificador de correlación único al
  * mensaje.
- * Añade el header 'CorrelationId' al mensaje entrante.
  * 
- * Útil para rastrear mensajes o agrupar fragmentos posteriormente (ej. en
- * Aggregator o Correlator).
+ * <p>
+ * Genera un ID secuencial ({@code 000001}, {@code 000002}...) y lo añade como
+ * header {@code CORRELATION_ID}.
+ * Esto es fundamental para tareas posteriores que requieren agrupar mensajes
+ * relacionados,
+ * como {@link iia.dsl.framework.tasks.routers.Correlator} o
+ * {@link iia.dsl.framework.tasks.transformers.Aggregator}.
  */
 public class CorrelationIdSetter extends Task {
 

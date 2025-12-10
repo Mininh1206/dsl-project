@@ -6,9 +6,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.w3c.dom.Document;
 
 /**
- * Singleton para almacenamiento en memoria de Documentos XML y listas de
- * Secuencia.
- * Simula un almacén global accesible por todas las tareas del Flow.
+ * Singleton para almacenamiento temporal en memoria.
+ * 
+ * <p>
+ * Actúa como una "memoria compartida" accesible por todas las tareas del
+ * framework.
+ * Es crucial para componentes que necesitan persistir estado intermedio, como
+ * el {@link iia.dsl.framework.tasks.transformers.Splitter}
+ * almacenando el documento esqueleto para el
+ * {@link iia.dsl.framework.tasks.transformers.Aggregator}.
+ * 
+ * <p>
+ * Es thread-safe gracias al uso de mapas concurrentes.
  */
 public class Storage {
 

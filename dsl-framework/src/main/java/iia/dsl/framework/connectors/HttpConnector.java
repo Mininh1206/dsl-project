@@ -145,7 +145,6 @@ public class HttpConnector extends Connector {
 
         int maxRetries = 3;
         int attempt = 0;
-        Exception lastException = null;
 
         while (attempt < maxRetries) {
             try {
@@ -163,7 +162,6 @@ public class HttpConnector extends Connector {
                 }
             } catch (Exception e) {
                 attempt++;
-                lastException = e;
                 System.err.println("[WARNING] HTTP " + method + " to " + urlString + " failed (Attempt " + attempt + "/"
                         + maxRetries + "): " + e.getMessage());
 

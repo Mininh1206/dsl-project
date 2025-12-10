@@ -18,21 +18,33 @@ import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 /**
- * Connector para la interacción con bases de datos SQL mediante JDBC.
- * Permite ejecutar consultas SQL definidas dinámicamente en el mensaje de
- * entrada.
+ * Conector JDBC para interacción con bases de datos relacionales.
+ * Permite ejecutar sentencias SQL dinámicas contenidas en los mensajes XML
+ * entrantes.
  * 
- * Los documentos de entrada deben tener la siguiente estructura:
+ * <p>
+ * Estructura esperada del mensaje de entrada (Request):
+ * 
+ * <pre>
+ * {@code
  * <sql>SELECT * FROM users WHERE id = 1</sql>
+ * }
+ * </pre>
  * 
- * La salida será un documento XML con la estructura:
+ * <p>
+ * Estructura del mensaje de salida (Response):
+ * 
+ * <pre>
+ * {@code
  * <resultset>
- * <row>
- * <column_name>value</column_name>
- * ...
- * </row>
- * ...
+ *   <row>
+ *     <column_name>valor</column_name>
+ *     ...
+ *   </row>
+ *   ...
  * </resultset>
+ * }
+ * </pre>
  */
 public class DataBaseConnector extends Connector {
 
@@ -41,6 +53,14 @@ public class DataBaseConnector extends Connector {
 
     private final Connection connection;
 
+    /**
+     * Constructor para DataBaseConnector.
+     * 
+     * @param port             El puerto asociado (usualmente RequestPort).
+     * @param connectionString URL de conexión JDBC.
+     * @param username         Usuario de la base de datos (opcional).
+     * @param password         Contraseña de la base de datos (opcional).
+     */
     public DataBaseConnector(Port port, String connectionString, String username, String password) {
         super(port);
 
@@ -64,6 +84,14 @@ public class DataBaseConnector extends Connector {
         }
     }
 
+    /**
+     * Ejecuta la consulta SQL extraída del documento XML.
+     * 
+     * @param input El documento XML conteniendo la consulta en el nodo /sql.
+     * @return Un nuevo documento XML con el ResultSet formateado, o null si no hubo
+     *         resultados.
+     * @throws Exception Si ocurre error en XPath o SQL.
+     */
     protected Document sqlQuery(Document input) throws Exception {
         // Saca la consulta del input con el xpath /sql
         var xpath = "/sql";

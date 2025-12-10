@@ -8,12 +8,15 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Router que filtra mensajes basándose en una condición XPath.
+ * Tarea de enrutamiento que filtra mensajes según una condición lógica.
  * 
- * Si la expresión XPath configurada evalúa a 1.0 (true) sobre el documento del
- * mensaje,
- * el mensaje se deja pasar a la salida. De lo contrario, el mensaje es
- * descartado.
+ * <p>
+ * Evalúa una expresión XPath sobre el documento del mensaje.
+ * <ul>
+ * <li>Si el resultado es {@code 1.0} (verdadero), el mensaje pasa a la
+ * salida.</li>
+ * <li>Si no, el mensaje es <b>descartado</b> y no continúa en el flujo.</li>
+ * </ul>
  */
 public class Filter extends Task {
 

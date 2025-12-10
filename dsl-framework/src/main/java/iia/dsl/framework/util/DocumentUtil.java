@@ -25,6 +25,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * Utilidades estáticas para el manejo de documentos XML (DOM).
+ * 
+ * <p>
+ * Provee métodos para:
+ * <ul>
+ * <li>Convertir Documentos a String (serialización).</li>
+ * <li>Parsear Strings a Documentos.</li>
+ * <li>Aplicar transformaciones XSLT.</li>
+ * <li>Visualizar la estructura del árbol XML.</li>
+ * </ul>
  *
  * @author Daniel
  */
@@ -47,8 +57,7 @@ public class DocumentUtil {
             DocumentBuilder builder = factory.newDocumentBuilder();
 
             ByteArrayInputStream input = new ByteArrayInputStream(
-                    xmlContent.getBytes(StandardCharsets.UTF_8)
-            );
+                    xmlContent.getBytes(StandardCharsets.UTF_8));
 
             return builder.parse(input);
         } catch (IOException | ParserConfigurationException | SAXException e) {

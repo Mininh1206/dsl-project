@@ -5,9 +5,6 @@
         
         
     <drink>
-            <name>cafe</name>
-            <type>hot</type>
-        <state>ready</state></drink><drink>
             <name>agua</name>
             <type>cold</type>
         <state>processing</state></drink><drink>

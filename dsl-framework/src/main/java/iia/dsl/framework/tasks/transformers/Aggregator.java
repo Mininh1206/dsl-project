@@ -15,16 +15,23 @@ import iia.dsl.framework.tasks.TaskType;
 import iia.dsl.framework.util.Storage;
 
 /**
- * Transformer que reconstruye un documento original a partir de sus fragmentos.
+ * Tarea de transformación que reconstruye un documento original a partir de sus
+ * fragmentos.
  * 
- * Funciona en conjunto con Splitter. Utiliza los headers 'NUM_FRAG' y
- * 'TOTAL_FRAG' para recolectar
- * todas las piezas de un mensaje original (identificado por su ID) y las
- * reinserta en el documento
- * original (recuperado de una unidad de almacenamiento 'Storage') en la
- * ubicación indicada por 'itemXPath'.
- *
- * @author javi
+ * <p>
+ * Complemento del {@link Splitter}. Funciona recolectando fragmentos de
+ * mensajes que comparten un mismo ID.
+ * Utiliza los headers {@code NUM_FRAG} y {@code TOTAL_FRAG} para determinar
+ * cuándo se han recibido todas las piezas.
+ * 
+ * <p>
+ * Una vez completado el conjunto:
+ * <ol>
+ * <li>Recupera el documento "esqueleto" original desde el {@link Storage}.</li>
+ * <li>Reinserta cada fragmento en la ubicación especificada por
+ * {@code itemXPath}.</li>
+ * <li>Publica el documento reconstruido completo en el slot de salida.</li>
+ * </ol>
  */
 public class Aggregator extends Task {
 
@@ -49,11 +56,11 @@ public class Aggregator extends Task {
             var m = in.getMessage();
 
             if (!m.hasDocument()) {
-                throw new Exception("No hay Documento en el slot de entrada para Aggregator");
+                throw new Exception("Error en Aggregator: El mensaje recibido no contiene un documento XML.");
             }
 
             if (!m.hasHeader(Message.NUM_FRAG) || !m.hasHeader(Message.TOTAL_FRAG)) {
-                throw new Exception("El mensaje no contiene los headers necesarios para la agregación");
+                throw new Exception("Error en Aggregator: Falta metadata de fragmentación (NUM_FRAG, TOTAL_FRAG).");
             }
 
             var numFrag = Integer.parseInt(m.getHeader(Message.NUM_FRAG));

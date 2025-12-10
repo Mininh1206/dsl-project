@@ -7,13 +7,15 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Router que combina múltiples flujos de entrada en un único flujo de salida.
+ * Tarea de enrutamiento que fusiona múltiples flujos de entrada en un único
+ * flujo de salida.
  * 
- * Procesa los mensajes de todos los slots de entrada y los envía al slot de
- * salida en orden secuencial,
- * sin modificar el contenido de los mensajes. Actúa como un embudo.
- * 
- * @author Javi
+ * <p>
+ * Actúa como un embudo: recibe cualquier mensaje que llegue por cualquiera de
+ * sus slots de entrada
+ * y lo reenvía inmediatamente al slot de salida único. No modifica el contenido
+ * del mensaje
+ * ni garantiza un ordenamiento específico entre diferentes entradas (FCFS).
  */
 public class Merger extends Task {
 
@@ -37,12 +39,11 @@ public class Merger extends Task {
     }
 
     /**
-     * Ejecuta el merge de todos los documentos disponibles en los input slots.
+     * Procesa los mensajes pendientes en todas las entradas y los mueve a la
+     * salida.
+     * En ejecución concurrente, esto se invoca continuamente o bajo demanda.
      * 
-     * Por cada llamada a execute(), procesa TODOS los documentos presentes
-     * en TODOS los input slots y los pasa al output slot en orden.
-     * 
-     * @throws Exception si hay algún error durante el procesamiento
+     * @throws Exception Si ocurre un error al mover los mensajes.
      */
     @Override
     public void execute() throws Exception {

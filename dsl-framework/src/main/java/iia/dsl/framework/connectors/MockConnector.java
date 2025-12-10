@@ -8,14 +8,26 @@ import iia.dsl.framework.ports.Port;
 import iia.dsl.framework.ports.RequestPort;
 
 /**
- * Connector de prueba que utiliza un documento estático predefinido.
- *
- * - Como entrada: Inyecta el documento "mock" en la red.
- * - Como salida/request: Devuelve el documento "mock" como respuesta inmediata.
+ * Conector simulado (Mock) para pruebas y prototipado.
+ * Permite inyectar o devolver documentos estáticos sin depender de sistemas
+ * externos reales.
+ * 
+ * <ul>
+ * <li><b>Input:</b> Inyecta el documento mock al inicio del flujo.</li>
+ * <li><b>Output/Request:</b> Responde inmediatamente con el documento mock
+ * ignorando la entrada.</li>
+ * </ul>
  */
 public class MockConnector extends Connector {
     private final Document mockDocument;
 
+    /**
+     * Constructor para MockConnector.
+     * 
+     * @param port         El puerto asociado.
+     * @param mockDocument El documento XML que servirá como entrada o respuesta
+     *                     fija.
+     */
     public MockConnector(Port port, Document mockDocument) {
         super(port);
         this.mockDocument = mockDocument;

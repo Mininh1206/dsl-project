@@ -12,9 +12,12 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Tarea que elimina un nodo específico del documento del mensaje.
- * El nodo a eliminar se determina mediante una expresión XPath configurada en
- * la construcción de la tarea.
+ * Tarea de modificación que elimina un nodo específico del documento XML.
+ * 
+ * <p>
+ * Utiliza una expresión XPath estática (configurada al inicio) para localizar y
+ * remover
+ * el elemento no deseado del mensaje entrante.
  */
 public class Slimmer extends Task {
 

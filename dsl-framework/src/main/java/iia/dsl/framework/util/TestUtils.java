@@ -8,22 +8,28 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 
+/**
+ * Clase de utilidades específicas para pruebas y desarrollo.
+ * 
+ * <p>
+ * Provee métodos helpers para crear documentos XML de prueba y constantes
+ * con ejemplos XML.
+ */
 public class TestUtils {
     public static Document createXMLDocument(String xmlContent) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            
+
             ByteArrayInputStream input = new ByteArrayInputStream(
-                xmlContent.getBytes(StandardCharsets.UTF_8)
-            );
-            
+                    xmlContent.getBytes(StandardCharsets.UTF_8));
+
             return builder.parse(input);
         } catch (Exception e) {
             throw new RuntimeException("Error creating XML document", e);
         }
     }
-    
+
     public static final String SAMPLE_XML = """
             <?xml version="1.0" encoding="UTF-8"?>
             <order>

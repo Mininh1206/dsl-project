@@ -17,16 +17,25 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Router que sincroniza y agrupa mensajes provenientes de múltiples entradas
- * basándose en un ID de correlación.
+ * Tarea de enrutamiento que sincroniza y agrupa mensajes provenientes de
+ * múltiples entradas
+ * basándose en un ID de correlación compartido.
  * 
- * Espera a recibir mensajes con el mismo ID de correlación en todas sus
- * entradas antes de liberarlos
- * simultáneamente por sus respectivas salidas.
+ * <p>
+ * Funcionamiento:
+ * <ol>
+ * <li>Espera a recibir un mensaje en <b>cada uno</b> de los slots de entrada (N
+ * entradas).</li>
+ * <li>Los agrupa verificando que tengan el mismo Correlation ID.</li>
+ * <li>Una vez completado el grupo, libera los mensajes simultáneamente por los
+ * slots de salida respectivos.</li>
+ * </ol>
  * 
- * El ID de correlación se obtiene, por defecto, del header 'CorrelationId', o
- * mediante una expresión XPath
- * configurada opcionalmente.
+ * <p>
+ * El ID de correlación se extrae por defecto del header {@code CORRELATION_ID}.
+ * Opcionalmente, se puede configurar una expresión XPath personalizada para
+ * extraer el ID
+ * del contenido del mensaje.
  */
 public class Correlator extends Task {
     private final Map<String, Message[]> messages;
@@ -54,8 +63,10 @@ public class Correlator extends Task {
 
     @Override
     public void execute() throws Exception {
+        // Validación básica de la configuración
         if (inputSlots.size() < 2 || inputSlots.size() != outputSlots.size()) {
-            throw new Exception("Los slots no son correctos");
+            throw new Exception("Configuración inválida en Correlator '" + id
+                    + "': Se requieren al menos 2 entradas y misma cantidad de salidas.");
         }
 
         for (int i = 0; i < inputSlots.size(); i++) {

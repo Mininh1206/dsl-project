@@ -8,12 +8,15 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Router que duplica (replica) un mensaje de entrada a TODAS sus salidas.
+ * Tarea de enrutamiento que duplica (broadcast) un mensaje entrante hacia
+ * <b>todas</b> sus salidas.
  * 
- * Cada slot de salida recibe una copia independiente del mensaje original.
- * Nota: Actualmente se copia el objeto Message, pero el Document DOM subyacente
- * sigue siendo compartido
- * a menos que se implemente una clonación profunda explícita.
+ * <p>
+ * Cada slot de salida recibe una copia nueva del mensaje (objeto
+ * {@code Message}), permitiendo
+ * que flujos paralelos procesen la misma información de manera independiente.
+ * Nota: El documento XML interno es compartido (referencia) a menos que se
+ * modifique explícitamente después.
  */
 public class Replicator extends Task {
 

@@ -6,6 +6,14 @@ import iia.dsl.framework.core.Message;
 import iia.dsl.framework.core.Slot;
 import iia.dsl.framework.util.DocumentUtil;
 
+/**
+ * Puerto bidireccional para operaciones de Petición-Respuesta
+ * (Request-Response).
+ * Combina la funcionalidad de input y output: toma un mensaje de un slot
+ * (Request),
+ * lo entrega al conector y espera una respuesta para colocarla en otro slot
+ * (Response).
+ */
 public class RequestPort extends Port {
     private final Slot inputSlot;
     private final Slot outputSlot;
@@ -26,8 +34,11 @@ public class RequestPort extends Port {
     }
 
     /**
-     * Obtiene el documento de request del slot de entrada.
-     * Este método es llamado por el connector para obtener el documento a enviar.
+     * Obtiene el documento de solicitud (Request) del slot de entrada.
+     * 
+     * @return El documento XML de la solicitud.
+     * @throws Exception Si el mensaje no contiene un documento válido o el slot
+     *                   está vacío.
      */
     public Document getRequestDocument() throws Exception {
         if (!inputSlot.hasMessage())
@@ -42,8 +53,12 @@ public class RequestPort extends Port {
     }
 
     /**
-     * Maneja el documento de respuesta recibido del connector.
-     * Este método es llamado por el connector después de recibir la respuesta.
+     * Procesa la respuesta recibida del conector.
+     * Aplica XSLT opcional y coloca el resultado en el slot de salida.
+     * Preserva las cabeceras del mensaje original (Correlation ID, etc.).
+     * 
+     * @param responseDoc El documento de respuesta recibido.
+     * @throws Exception Si ocurre un error de transformación.
      */
     public void handleResponse(Document responseDoc) throws Exception {
         if (responseDoc == null)

@@ -10,11 +10,15 @@ import iia.dsl.framework.tasks.Task;
 import iia.dsl.framework.tasks.TaskType;
 
 /**
- * Router que distribuye un mensaje de entrada a UNA de sus múltiples salidas.
+ * Tarea de enrutamiento condicional. Distribuye un mensaje entrante hacia
+ * <b>una</b> de las múltiples salidas posibles.
  * 
- * Utiliza una lista de expresiones XPath, una por cada slot de salida.
- * Evalúa las expresiones en orden; el mensaje se envía por el primer slot cuya
- * expresión XPath evalúe a 'true'.
+ * <p>
+ * Utiliza una lista ordenada de expresiones XPath booleanas, correspondientes
+ * una a una con los slots de salida.
+ * Evalúa las expresiones secuencialmente; el mensaje se envía por el slot
+ * asociado a la primera expresión
+ * que evalúe a {@code true}.
  */
 public class Distributor extends Task {
 
@@ -33,7 +37,8 @@ public class Distributor extends Task {
     @Override
     public void execute() throws Exception {
         if (xPath.size() != outputSlots.size()) {
-            throw new Exception("Los slots no son correctos");
+            throw new Exception("Configuración inválida en Distributor '" + id
+                    + "': El número de expresiones XPath debe coincidir con el número de salidas.");
         }
 
         var in = inputSlots.get(0);

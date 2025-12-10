@@ -22,12 +22,15 @@ import iia.dsl.framework.ports.RequestPort;
 import iia.dsl.framework.core.Slot;
 
 /**
- * Connector para leer o escribir archivos en el sistema de archivos local.
+ * Conector para lectura y escritura en el sistema de archivos local.
+ * Soporta operaciones tanto de entrada (Source) como de salida (Sink).
  * 
- * - Si actúa como InputPort: Lee el archivo especificado y lo inyecta como un
- * documento XML en el flujo.
- * - Si actúa como OutputPort: Escribe el documento XML recibido en el archivo
- * especificado.
+ * <ul>
+ * <li><b>InputPort:</b> Lee un archivo XML (o todos los .xml de un directorio)
+ * y genera mensajes.</li>
+ * <li><b>OutputPort:</b> Escribe el contenido XML recibido en un archivo
+ * destino.</li>
+ * </ul>
  */
 public class FileConnector extends Connector {
 
@@ -39,6 +42,12 @@ public class FileConnector extends Connector {
         super.onMessageAvailable(slot);
     }
 
+    /**
+     * Constructor para FileConnector.
+     * 
+     * @param port     El puerto asociado (InputPort o OutputPort).
+     * @param filePath Ruta absoluta o relativa al archivo o directorio.
+     */
     public FileConnector(Port port, String filePath) {
         super(port);
 
@@ -50,6 +59,13 @@ public class FileConnector extends Connector {
         this.file = new File(filePath);
     }
 
+    /**
+     * Ejecuta la operación de archivo según el tipo de puerto.
+     * - Input: Parsea el archivo XML y notifica al puerto.
+     * - Output: Transforma el DOM en texto y lo escribe en disco.
+     * 
+     * @throws Exception Si hay errores de E/S o de parseo XML.
+     */
     @Override
     public void execute() throws Exception {
         if (port instanceof InputPort inputPort) {
